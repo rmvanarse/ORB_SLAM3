@@ -46,6 +46,18 @@ MESSAGE(${OpenCV_VERSION})
 
 find_package(Eigen3 3.1.0 REQUIRED)
 find_package(Pangolin REQUIRED)
+find_package(catkin REQUIRED)
+
+find_package(catkin REQUIRED COMPONENTS 
+  roscpp
+  rospy
+  std_msgs
+  geometry_msgs
+  nav_msgs
+  image_transport
+  cv_bridge
+  OpenCV
+)
 
 include_directories(
 ${PROJECT_SOURCE_DIR}
@@ -53,6 +65,7 @@ ${PROJECT_SOURCE_DIR}/include
 ${PROJECT_SOURCE_DIR}/include/CameraModels
 ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
+${catkin_INCLUDE_DIRS}
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
@@ -124,6 +137,7 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 -lboost_serialization
 -lcrypto
+${catkin_LIBRARIES}
 )
 
 
@@ -143,7 +157,7 @@ target_link_libraries(stereo_kitti ${PROJECT_NAME})
 
 add_executable(stereo_euroc
 Examples/Stereo/stereo_euroc.cc)
-target_link_libraries(stereo_euroc ${PROJECT_NAME})
+target_link_libraries(stereo_euroc ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 add_executable(stereo_tum_vi
 Examples/Stereo/stereo_tum_vi.cc)
@@ -184,7 +198,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo-Inertia
 
 add_executable(stereo_inertial_euroc
 Examples/Stereo-Inertial/stereo_inertial_euroc.cc)
-target_link_libraries(stereo_inertial_euroc ${PROJECT_NAME})
+target_link_libraries(stereo_inertial_euroc ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 add_executable(stereo_inertial_tum_vi

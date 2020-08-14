@@ -92,7 +92,8 @@ void Map::SetImuInitialized()
 bool Map::isImuInitialized()
 {
     unique_lock<mutex> lock(mMutexMap);
-    return mbImuInitialized;
+    //return true; 
+    return mbImuInitialized; //TEMPORARY -rmv
 }
 
 void Map::EraseMapPoint(MapPoint *pMP)

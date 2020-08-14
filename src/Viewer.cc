@@ -20,6 +20,7 @@
 #include "Viewer.h"
 #include <pangolin/pangolin.h>
 
+
 #include <mutex>
 
 namespace ORB_SLAM3
@@ -27,9 +28,18 @@ namespace ORB_SLAM3
 
 Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Tracking *pTracking, const string &strSettingPath):
     both(false), mpSystem(pSystem), mpFrameDrawer(pFrameDrawer),mpMapDrawer(pMapDrawer), mpTracker(pTracking),
-    mbFinishRequested(false), mbFinished(true), mbStopped(true), mbStopRequested(false)
+    mbFinishRequested(false), mbFinished(true), mbStopped(true), mbStopRequested(false),img_transporter(nh)
 {
+    
+    //rmv
+     
+    
+    image_pub = img_transporter.advertise("/orbslam3/image_features", 1);  
+
+
+    //
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+
 
     float fps = fSettings["Camera.fps"];
     if(fps<1)
@@ -97,7 +107,7 @@ void Viewer::Run()
     Ow.SetIdentity();
     pangolin::OpenGlMatrix Twwp; // Oriented with g in the z axis, but y and x from camera
     Twwp.SetIdentity();
-    cv::namedWindow("ORB-SLAM3: Current Frame");
+    cv::namedWindow("ORB-SLAM3: Current Frame",0);
 
     bool bFollow = true;
     bool bLocalizationMode = false;
@@ -227,8 +237,19 @@ void Viewer::Run()
             toShow = im;
         }
 
-        cv::imshow("ORB-SLAM3: Current Frame",toShow);
+        //THIS PART HAS BEEN CHANGED TO PUBBLISH ROSMSG INSTEAD OF CV IMSHOW -Rmv
+        
+        //cv::resizeWindow("ORB-SLAM3: Current Frame", 800,600);
+        //cv::imshow("ORB-SLAM3: Current Frame",toShow);
         cv::waitKey(mT);
+
+        header.stamp = ros::Time::now();
+        cv_bridge::CvImage cv_img(header, sensor_msgs::image_encodings::RGB8, toShow);
+        sensor_msgs::Image img_msg;
+        cv_img.toImageMsg(img_msg);
+        //cv_bridge::CvImagePtr cv_ptr;
+        //cv_ptr->image = cv_img;
+        image_pub.publish(img_msg);
 
         if(menuReset)
         {

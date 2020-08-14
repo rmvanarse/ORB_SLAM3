@@ -27,6 +27,12 @@
 
 #include <mutex>
 
+#include <ros/ros.h>//TRIAL
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+
+
 namespace ORB_SLAM3
 {
 
@@ -42,6 +48,11 @@ public:
 
     // Main thread function. Draw points, keyframes, the current camera pose and the last processed
     // frame. Drawing is refreshed according to the camera fps. We use Pangolin.
+    ros::NodeHandle nh;
+	image_transport::ImageTransport img_transporter;
+	image_transport::Publisher image_pub;
+	std_msgs::Header header;
+	
     void Run();
 
     void RequestFinish();

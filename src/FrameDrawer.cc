@@ -115,7 +115,7 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures)
     {
         mnTracked=0;
         mnTrackedVO=0;
-        const float r = 5;
+        const float r = 8;
         int n = vCurrentKeys.size();
         for(int i=0;i<n;i++)
         {
@@ -130,13 +130,13 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures)
                 // This is a match to a MapPoint in the map
                 if(vbMap[i])
                 {
-                    cv::rectangle(im,pt1,pt2,cv::Scalar(0,255,0));
+                    cv::rectangle(im,pt1,pt2,cv::Scalar(0,255,0),2);
                     cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(0,255,0),-1);
                     mnTracked++;
                 }
                 else // This is match to a "visual odometry" MapPoint created in the last frame
                 {
-                    cv::rectangle(im,pt1,pt2,cv::Scalar(255,0,0));
+                    cv::rectangle(im,pt1,pt2,cv::Scalar(255,0,0),2);
                     cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(255,0,0),-1);
                     mnTrackedVO++;
                 }

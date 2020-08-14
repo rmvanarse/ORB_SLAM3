@@ -1198,7 +1198,7 @@ void Tracking::Track()
                 if(!pCurrentMap->isImuInitialized() || !pCurrentMap->GetIniertialBA2())
                 {
                     cout << "IMU is not or recently initialized. Reseting active map..." << endl;
-                    mpSystem->ResetActiveMap();
+                    mpSystem->ResetActiveMap(); //temp -rmv
                 }
 
                 mState=RECENTLY_LOST;
@@ -1367,13 +1367,13 @@ void Tracking::StereoInitialization()
             if (!mCurrentFrame.mpImuPreintegrated || !mLastFrame.mpImuPreintegrated)
             {
                 cout << "not IMU meas" << endl;
-                return;
+                return; //temporarily -rmv
             }
 
-            if (cv::norm(mCurrentFrame.mpImuPreintegratedFrame->avgA-mLastFrame.mpImuPreintegratedFrame->avgA)<0.5)
+            if (cv::norm(mCurrentFrame.mpImuPreintegratedFrame->avgA-mLastFrame.mpImuPreintegratedFrame->avgA)<0.01) /*originally 0.5*/
             {
                 cout << "not enough acceleration" << endl;
-                return;
+                return; //temporarily -rmv
             }
 
             if(mpImuPreintegratedFromLastKF)
@@ -1621,7 +1621,7 @@ void Tracking::CreateInitialMapMonocular()
     else
         invMedianDepth = 1.0f/medianDepth;
 
-    if(medianDepth<0 || pKFcur->TrackedMapPoints(1)<50) // TODO Check, originally 100 tracks
+    if(medianDepth<0 || pKFcur->TrackedMapPoints(1)<50) // Initially <50
     {
         Verbose::PrintMess("Wrong initialization, reseting...", Verbose::VERBOSITY_NORMAL);
         mpSystem->ResetActiveMap();
@@ -2878,7 +2878,7 @@ void Tracking::ResetActiveMap(bool bLocMap)
     if (!bLocMap)
     {
         Verbose::PrintMess("Reseting Local Mapper...", Verbose::VERBOSITY_NORMAL);
-        mpLocalMapper->RequestResetActiveMap(pMap);
+        mpLocalMapper->RequestResetActiveMap(pMap); //Temporary -rmv
         Verbose::PrintMess("done", Verbose::VERBOSITY_NORMAL);
     }
 
