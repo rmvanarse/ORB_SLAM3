@@ -1,0 +1,18 @@
+
+<launch>
+	<node pkg="image_transport" type="republish" name="republish1" args="compressed in:=/slave1/image_raw out:=/camera/left/image_raw"/>	
+
+	<node pkg="image_transport" type="republish" name="republish2" args="compressed in:=/slave2/image_raw out:=/camera/right/image_raw"/>
+
+	<node pkg="tf" name="tf_map_odom" type="static_transform_publisher" args="0 0 0 0 0 -90 map odom 20"/>
+
+	<node pkg="ORB_SLAM3" type="pose_to_path.py" name="pose_to_path"/>
+
+	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find ORB_SLAM3)/rviz/orb.rviz"/>
+
+
+	<node pkg="ORB_SLAM3" type="Stereo" name="Stereo" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../cave.yaml true" output="screen"/>
+
+
+
+</launch>
