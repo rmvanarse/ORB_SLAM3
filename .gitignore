@@ -30,6 +30,9 @@ Examples/ROS/ORB_SLAM3/build/
 
 KeyFrameTrajectory.txt
 CameraTrajectory.txt
+FrameTrajectory_KITTI_Format.txt
+FrameTrajectory_TUM_Format.txt
+
 kf_*.txt
 f_*.txt
 Thirdparty/DBoW2/build/

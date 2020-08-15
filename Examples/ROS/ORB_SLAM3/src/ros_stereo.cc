@@ -183,26 +183,29 @@ void ImageGrabber::GrabStereo(const sensor_msgs::ImageConstPtr& msgLeft,const se
     }
 
 
-    geometry_msgs::PoseStamped pose;
-    pose.header.stamp = ros::Time::now();
-    pose.header.frame_id ="odom";
+    try{
+        geometry_msgs::PoseStamped pose;
+        pose.header.stamp = ros::Time::now();
+        pose.header.frame_id ="odom";
 
-    cv::Mat Rwc = Tcw.rowRange(0,3).colRange(0,3).t(); // Rotation information
-    cv::Mat twc = -Rwc*Tcw.rowRange(0,3).col(3); // translation information
-    vector<float> q = ORB_SLAM3::Converter::toQuaternion(Rwc);
+        cv::Mat Rwc = Tcw.rowRange(0,3).colRange(0,3).t(); // Rotation information
+        cv::Mat twc = -Rwc*Tcw.rowRange(0,3).col(3); // translation information
+        vector<float> q = ORB_SLAM3::Converter::toQuaternion(Rwc);
 
-    tf::Transform new_transform;
-    new_transform.setOrigin(tf::Vector3(twc.at<float>(0, 0), twc.at<float>(0, 1), twc.at<float>(0, 2)));
+        tf::Transform new_transform;
+        new_transform.setOrigin(tf::Vector3(twc.at<float>(0, 0), twc.at<float>(0, 1), twc.at<float>(0, 2)));
 
-    tf::Quaternion quaternion(q[0], q[1], q[2], q[3]);
-    new_transform.setRotation(quaternion);
+        tf::Quaternion quaternion(q[0], q[1], q[2], q[3]);
+        new_transform.setRotation(quaternion);
 
-    tf::poseTFToMsg(new_transform, pose.pose);
+        tf::poseTFToMsg(new_transform, pose.pose);
 
-    //ros::NodeHandle nh;
-    //ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/orbslam/pose", 50);
+        //ros::NodeHandle nh;
+        //ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/orbslam/pose", 50);
 
-    pose_pub.publish(pose);
+        pose_pub.publish(pose);
+        
+    }catch(...){std::cout<<"Failed to publish pose"<<std::endl;}
 
 }
 

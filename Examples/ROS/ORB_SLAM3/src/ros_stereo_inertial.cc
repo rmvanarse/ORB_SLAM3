@@ -29,10 +29,16 @@
 #include<cv_bridge/cv_bridge.h>
 #include<sensor_msgs/Imu.h>
 
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <tf/tf.h> 
+#include <tf/transform_datatypes.h> 
+
 #include<opencv2/core/core.hpp>
 
 #include"../../../include/System.h"
 #include"../include/ImuTypes.h"
+#include"../../../include/Converter.h"
 
 using namespace std;
 
@@ -67,6 +73,8 @@ public:
 
     const bool mbClahe;
     cv::Ptr<cv::CLAHE> mClahe = cv::createCLAHE(3.0, cv::Size(8, 8));
+
+    ros::Publisher pose_pub;
 };
 
 
@@ -136,7 +144,9 @@ int main(int argc, char **argv)
         cv::initUndistortRectifyMap(K_l,D_l,R_l,P_l.rowRange(0,3).colRange(0,3),cv::Size(cols_l,rows_l),CV_32F,igb.M1l,igb.M2l);
         cv::initUndistortRectifyMap(K_r,D_r,R_r,P_r.rowRange(0,3).colRange(0,3),cv::Size(cols_r,rows_r),CV_32F,igb.M1r,igb.M2r);
     }
-
+  
+  igb.pose_pub = n.advertise<geometry_msgs::PoseStamped>("/orbslam3/pose", 50);
+  
   // Maximum delay, 5 seconds
   ros::Subscriber sub_imu = n.subscribe("/imu", 1000, &ImuGrabber::GrabImu, &imugb); 
   ros::Subscriber sub_img_left = n.subscribe("/camera/left/image_raw", 100, &ImageGrabber::GrabImageLeft,&igb);
@@ -263,10 +273,39 @@ void ImageGrabber::SyncWithImu()
         cv::remap(imRight,imRight,M1r,M2r,cv::INTER_LINEAR);
       }
 
-      mpSLAM->TrackStereo(imLeft,imRight,tImLeft,vImuMeas);
+      cv::Mat Tcw = mpSLAM->TrackStereo(imLeft,imRight,tImLeft,vImuMeas);
+      std::cout << "Debug: " << Tcw.rows << std::endl;
 
       std::chrono::milliseconds tSleep(1);
       std::this_thread::sleep_for(tSleep);
+    
+
+      //New -Rmv
+
+      try{
+
+        geometry_msgs::PoseStamped pose;
+        pose.header.stamp = ros::Time::now();
+        pose.header.frame_id ="odom";
+
+        cv::Mat Rwc = Tcw.rowRange(0,3).colRange(0,3).t(); // Rotation information
+        
+        cv::Mat twc = -Rwc*Tcw.rowRange(0,3).col(3); // translation information
+        vector<float> q = ORB_SLAM3::Converter::toQuaternion(Rwc);
+
+        tf::Transform new_transform;
+        new_transform.setOrigin(tf::Vector3(twc.at<float>(0, 0), twc.at<float>(0, 1), twc.at<float>(0, 2)));
+
+        tf::Quaternion quaternion(q[0], q[1], q[2], q[3]);
+        new_transform.setRotation(quaternion);
+
+        tf::poseTFToMsg(new_transform, pose.pose);
+
+        pose_pub.publish(pose);
+
+      
+      }catch(...){std::cout<<"Failed to publish pose"<<std::endl;}
+
     }
   }
 }
