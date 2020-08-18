@@ -148,9 +148,9 @@ int main(int argc, char **argv)
   igb.pose_pub = n.advertise<geometry_msgs::PoseStamped>("/orbslam3/pose", 50);
   
   // Maximum delay, 5 seconds
-  ros::Subscriber sub_imu = n.subscribe("/imu/imu", 1000, &ImuGrabber::GrabImu, &imugb); 
-  ros::Subscriber sub_img_left = n.subscribe("/camera/left/image_raw", 100, &ImageGrabber::GrabImageLeft,&igb);
-  ros::Subscriber sub_img_right = n.subscribe("/camera/right/image_raw", 100, &ImageGrabber::GrabImageRight,&igb);
+  ros::Subscriber sub_imu = n.subscribe("/imu/imu", 100, &ImuGrabber::GrabImu, &imugb); 
+  ros::Subscriber sub_img_left = n.subscribe("/camera/left/image_raw", 10, &ImageGrabber::GrabImageLeft,&igb);
+  ros::Subscriber sub_img_right = n.subscribe("/camera/right/image_raw", 10, &ImageGrabber::GrabImageRight,&igb);
 
   std::thread sync_thread(&ImageGrabber::SyncWithImu,&igb);
 
@@ -164,6 +164,8 @@ int main(int argc, char **argv)
 void ImageGrabber::GrabImageLeft(const sensor_msgs::ImageConstPtr &img_msg)
 {
   mBufMutexLeft.lock();
+  //if (!imgLeftBuf.empty())
+    //imgLeftBuf.pop();
   imgLeftBuf.push(img_msg);
   mBufMutexLeft.unlock();
 }
@@ -171,6 +173,8 @@ void ImageGrabber::GrabImageLeft(const sensor_msgs::ImageConstPtr &img_msg)
 void ImageGrabber::GrabImageRight(const sensor_msgs::ImageConstPtr &img_msg)
 {
   mBufMutexRight.lock();
+  //if (!imgRightBuf.empty())
+    //imgRightBuf.pop();
   imgRightBuf.push(img_msg);
   mBufMutexRight.unlock();
 }
