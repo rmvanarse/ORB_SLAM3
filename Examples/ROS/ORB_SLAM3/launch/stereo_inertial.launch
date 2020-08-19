@@ -4,9 +4,9 @@
 
 	<node pkg="image_transport" type="republish" name="republish2" args="compressed in:=/slave2/image_raw out:=/camera/right/image_raw"/>
 
-	<node pkg="tf" name="tf_map_odom" type="static_transform_publisher" args="0 0 0 0 0 -90 map odom 20"/>
+	<node pkg="tf" name="tf_map_odom" type="static_transform_publisher" args="0 0 0 -90 0 0 map odom 20"/>
 
-	<node pkg="ORB_SLAM3" type="pose_to_path.py" name="pose_to_path"/>
+	<node pkg="ORB_SLAM3" type="pose_to_path.py" name="pose_to_path" output="screen"/>
 
 	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find ORB_SLAM3)/rviz/orb.rviz"/>
 
