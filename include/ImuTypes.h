@@ -37,7 +37,7 @@ namespace ORB_SLAM3
 namespace IMU
 {
 
-const float GRAVITY_VALUE=9.81;
+const float GRAVITY_VALUE=9.79325;
 
 //IMU measurement (gyro, accelerometer and timestamp)
 class Point
@@ -280,6 +280,6 @@ cv::Mat NormalizeRotation(const cv::Mat &R);
 
 }
 
-} //namespace ORB_SLAM2
+} //namespace ORB_SLAM3
 
 #endif // IMUTYPES_H

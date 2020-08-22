@@ -20,7 +20,7 @@ Camera.width: 1600
 Camera.height: 1200
 
 # Camera frames per second 
-Camera.fps: 6.66 #20*rate
+Camera.fps: 15 #
 
 # stereo baseline times fx
 Camera.bf: 160.604
@@ -41,12 +41,12 @@ Tbc: !!opencv-matrix
         -0.006644577844233425, -0.027882716202835157, 0.9995891174489757, 0.024317486464850345,
          0.0, 0.0, 0.0, 1.0]
 
-# IMU noise (may need to switch noise & random walk)
-IMU.NoiseGyro:  6.5e-3 #6.5e-03 # 1.6968e-04 
+# IMU noise
+IMU.NoiseGyro:  8.7266e-05 #6.5e-03 # 1.6968e-04 
 IMU.NoiseAcc: 1.0e-03 # 2.0000e-3
-IMU.GyroWalk: 2.78e-3 #2.0e-4 #1.9393e-05 
-IMU.AccWalk: 4.0e-4 #3.0e-04 # 3.0000e-3
-IMU.Frequency: 33.33 # 100*rate
+IMU.GyroWalk: 1.0e-02 #2.78e-3 #2.0e-4 #1.9393e-05 
+IMU.AccWalk: 4.0e-2 #3.0e-04 # 3.0000e-3
+IMU.Frequency: 83.333 #(IMU readings missing, otherwise 166.667)
 
 #--------------------------------------------------------------------------------------------
 # Stereo Rectification. Only if you need to pre-rectify the images.

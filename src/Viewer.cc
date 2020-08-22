@@ -250,6 +250,8 @@ void Viewer::Run()
         cv_img.toImageMsg(img_msg);
         //cv_bridge::CvImagePtr cv_ptr;
         //cv_ptr->image = cv_img;
+        
+        
         image_pub.publish(img_msg);
 
         if(menuReset)
