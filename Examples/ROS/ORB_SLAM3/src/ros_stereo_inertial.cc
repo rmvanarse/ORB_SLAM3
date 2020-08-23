@@ -42,6 +42,8 @@
 
 using namespace std;
 
+double timeshift_left = 0.0, timeshift_right = 0.0;
+
 class ImuGrabber
 {
 public:
@@ -99,6 +101,18 @@ int main(int argc, char **argv)
     if(sbEqual == "true")
       bEqual = true;
   }
+
+  //Get timeshift
+  std::string ts_l, ts_r;
+  if(n.getParam("/camera/left/timeshift", timeshift_left) && 
+    n.getParam("/camera/right/timeshift", timeshift_right)){
+
+    std::cout << "\n\nTimeshifts:\n"<<"- L: " << timeshift_left << "\n- R: " << timeshift_right <<std::endl;
+  }else{
+    std::cout << "\n\nTimeshift 0" <<std::endl;
+  }
+
+  //
 
   // Create SLAM system. It initializes all system threads and gets ready to process frames.
   ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::IMU_STEREO,true);
@@ -210,10 +224,13 @@ void ImageGrabber::SyncWithImu()
   {
     cv::Mat imLeft, imRight;
     double tImLeft = 0, tImRight = 0;
+
+
+
     if (!imgLeftBuf.empty()&&!imgRightBuf.empty()&&!mpImuGb->imuBuf.empty())
     {
-      tImLeft = imgLeftBuf.front()->header.stamp.toSec();
-      tImRight = imgRightBuf.front()->header.stamp.toSec();
+      tImLeft = imgLeftBuf.front()->header.stamp.toSec() - timeshift_left;
+      tImRight = imgRightBuf.front()->header.stamp.toSec() - timeshift_right;
 
       this->mBufMutexRight.lock();
       while((tImLeft-tImRight)>maxTimeDiff && imgRightBuf.size()>1)

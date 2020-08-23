@@ -10,8 +10,12 @@
 
 	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find ORB_SLAM3)/rviz/orb.rviz"/>
 
+<rosparam>
+/camera/left/timeshift: 0.0045
+/camera/right/timeshift: 0.0045
+</rosparam>
 
-	<node pkg="ORB_SLAM3" type="Stereo_Inertial" name="Stereo_Inertial" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../cave_stereo_inertial.yaml true" output="screen"/>
+	<node pkg="ORB_SLAM3" type="Stereo_Inertial" name="Stereo_Inertial" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../cave_stereo_inertial.yaml true" output="screen" launch-prefix="xterm -e gdb --args"/>
 
 
 
