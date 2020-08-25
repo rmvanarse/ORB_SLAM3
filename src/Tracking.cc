@@ -408,7 +408,7 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
     mCurrentFrame.mNameFile = filename;
     mCurrentFrame.mnDataset = mnNumDataset;
 
-    Track();
+    try{Track();}catch(...){std::cout<<"FAILED TO TRACK";}
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
@@ -679,21 +679,31 @@ void Tracking::PreintegrateIMU()
 
 
 bool Tracking::PredictStateIMU()
-{
+{   
+    bool debug_temp = false;
+
     if(!mCurrentFrame.mpPrevFrame)
-    {
+    {   
+        if(debug_temp) std::cout<<"PredictStateIMU() if block 1"<<std::endl;
         Verbose::PrintMess("No last frame", Verbose::VERBOSITY_NORMAL);
         return false;
     }
 
+    if(debug_temp) std::cout<<"PredictStateIMU() between 1&2"<<std::endl;
+
     if(mbMapUpdated && mpLastKeyFrame)
-    {
+    {   
+        if(debug_temp) std::cout<<"PredictStateIMU() if block 2"<<std::endl;
         const cv::Mat twb1 = mpLastKeyFrame->GetImuPosition();
         const cv::Mat Rwb1 = mpLastKeyFrame->GetImuRotation();
         const cv::Mat Vwb1 = mpLastKeyFrame->GetVelocity();
 
+        if(debug_temp) std::cout<<"Position Rotation, velocity succesful"<<std::endl;
+
         const cv::Mat Gz = (cv::Mat_<float>(3,1) << 0,0,-IMU::GRAVITY_VALUE);
         const float t12 = mpImuPreintegratedFromLastKF->dT;
+
+        if(debug_temp) std::cout<<"mpImuPreintegratedFromLastKF succesful"<<std::endl;
 
         cv::Mat Rwb2 = IMU::NormalizeRotation(Rwb1*mpImuPreintegratedFromLastKF->GetDeltaRotation(mpLastKeyFrame->GetImuBias()));
         cv::Mat twb2 = twb1 + Vwb1*t12 + 0.5f*t12*t12*Gz+ Rwb1*mpImuPreintegratedFromLastKF->GetDeltaPosition(mpLastKeyFrame->GetImuBias());
@@ -702,17 +712,39 @@ bool Tracking::PredictStateIMU()
         mCurrentFrame.mPredRwb = Rwb2.clone();
         mCurrentFrame.mPredtwb = twb2.clone();
         mCurrentFrame.mPredVwb = Vwb2.clone();
+
+        if(debug_temp) std::cout<<"Clones succesful"<<std::endl;
+
         mCurrentFrame.mImuBias = mpLastKeyFrame->GetImuBias();
         mCurrentFrame.mPredBias = mCurrentFrame.mImuBias;
+
+        if(debug_temp) std::cout<<"Get IMU bias succesful"<<std::endl;
         return true;
     }
-    else if(!mbMapUpdated)
-    {
+    else if(!mbMapUpdated && mCurrentFrame.mpImuPreintegratedFrame!=NULL)
+    {   
+        if(debug_temp) std::cout<<"PredictStateIMU() esle block of 2"<<std::endl;
         const cv::Mat twb1 = mLastFrame.GetImuPosition();
         const cv::Mat Rwb1 = mLastFrame.GetImuRotation();
+
+        if(debug_temp) std::cout<<"Position Rotation succesful"<<std::endl;
+
+
         const cv::Mat Vwb1 = mLastFrame.mVw;
+        if(debug_temp) std::cout<<"Line 1 succesful"<<std::endl;
         const cv::Mat Gz = (cv::Mat_<float>(3,1) << 0,0,-IMU::GRAVITY_VALUE);
-        const float t12 = mCurrentFrame.mpImuPreintegratedFrame->dT;
+        if(debug_temp) std::cout<<"Line 2 succesful"<<std::endl;
+
+        /*
+        if(mCurrentFrame.mpImuPreintegratedFrame!=NULL){
+            std::cout<<"\nmpImuPreintegratedFrame NOT NULL\n\n";
+        }else{
+            std::cout<<"\nmpImuPreintegratedFrame IS NULL\n\n";
+        }*/
+
+        const float t12 = mCurrentFrame.mpImuPreintegratedFrame->dT; //<--Error here
+
+        if(debug_temp) std::cout<<"mpImuPreintegratedFrame succesful"<<std::endl;
 
         cv::Mat Rwb2 = IMU::NormalizeRotation(Rwb1*mCurrentFrame.mpImuPreintegratedFrame->GetDeltaRotation(mLastFrame.mImuBias));
         cv::Mat twb2 = twb1 + Vwb1*t12 + 0.5f*t12*t12*Gz+ Rwb1*mCurrentFrame.mpImuPreintegratedFrame->GetDeltaPosition(mLastFrame.mImuBias);
@@ -722,8 +754,14 @@ bool Tracking::PredictStateIMU()
         mCurrentFrame.mPredRwb = Rwb2.clone();
         mCurrentFrame.mPredtwb = twb2.clone();
         mCurrentFrame.mPredVwb = Vwb2.clone();
+
+        if(debug_temp) std::cout<<"Clones succesful"<<std::endl;
+
         mCurrentFrame.mImuBias =mLastFrame.mImuBias;
         mCurrentFrame.mPredBias = mCurrentFrame.mImuBias;
+
+        if(debug_temp) std::cout<<"Get IMU bias succesful"<<std::endl;
+
         return true;
     }
     else

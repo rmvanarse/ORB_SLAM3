@@ -74,7 +74,7 @@ public:
     cv::Mat M1l,M2l,M1r,M2r;
 
     const bool mbClahe;
-    cv::Ptr<cv::CLAHE> mClahe = cv::createCLAHE(3.0, cv::Size(8, 8));
+    cv::Ptr<cv::CLAHE> mClahe = cv::createCLAHE(2.0, cv::Size(8, 8)); //3.0, (8,8) -rmv
 
     ros::Publisher pose_pub;
 };
@@ -282,8 +282,9 @@ void ImageGrabber::SyncWithImu()
         }
       }
       mpImuGb->mBufMutex.unlock();
-      if(mbClahe)
+      if(mbClahe) //mbClahe replaced by true
       {
+        //std::cout <<"\n CLAHE! \n\n";
         mClahe->apply(imLeft,imLeft);
         mClahe->apply(imRight,imRight);
       }

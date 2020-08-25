@@ -115,8 +115,10 @@ cv::Mat Converter::toCvSE3(const Eigen::Matrix<double,3,3> &R, const Eigen::Matr
 }
 
 Eigen::Matrix<double,3,1> Converter::toVector3d(const cv::Mat &cvVector)
-{
+{   
+    //Receiving a 0x0 marix sometimes
     Eigen::Matrix<double,3,1> v;
+    //std::cout <<"\n("<<cvVector.rows<<", "<<cvVector.cols<<")\n\n";
     v << cvVector.at<float>(0), cvVector.at<float>(1), cvVector.at<float>(2);
 
     return v;

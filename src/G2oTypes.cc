@@ -25,7 +25,14 @@ namespace ORB_SLAM3
 ImuCamPose::ImuCamPose(KeyFrame *pKF):its(0)
 {
     // Load IMU pose
-    twb = Converter::toVector3d(pKF->GetImuPosition());
+    //std::cout <<"\n("<<pKF->GetImuPosition().rows<<", "<<pKF->GetImuPosition().cols<<")\n\n";
+    
+    if(pKF->GetImuPosition().rows!=3 || pKF->GetImuPosition().cols!=1){
+        std::cout << "\nInvalid IMU Position matrix\n\n";
+    }else{
+        twb = Converter::toVector3d(pKF->GetImuPosition()); //<--Error Here
+    }
+    
     Rwb = Converter::toMatrix3d(pKF->GetImuRotation());
 
     // Load camera poses

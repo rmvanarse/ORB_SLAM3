@@ -164,7 +164,7 @@ void LocalMapping::Run()
                     if (mbMonocular)
                         InitializeIMU(1e2, 1e10, true);
                     else
-                        InitializeIMU(1e2, 3e6, true); /*arg2 initially 1e5*/
+                        InitializeIMU(1e2, 3e6, true); /*initially 1e2, 1e5, changed to __,3e6*/
                 }
 
 
