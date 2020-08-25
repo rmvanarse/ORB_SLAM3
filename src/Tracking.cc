@@ -911,7 +911,7 @@ void Tracking::Track()
             CreateMapInAtlas();
             return;
         }
-        else if(mCurrentFrame.mTimeStamp>mLastFrame.mTimeStamp+1.0)
+        else if(mCurrentFrame.mTimeStamp>mLastFrame.mTimeStamp+2.0) //Orignally 1.0 rmv
         {
             cout << "id last: " << mLastFrame.mnId << "    id curr: " << mCurrentFrame.mnId << endl;
             if(mpAtlas->isInertial())
@@ -2060,6 +2060,7 @@ bool Tracking::TrackLocalMap()
             {
                 Verbose::PrintMess("TLM: PoseInertialOptimizationLastKeyFrame ", Verbose::VERBOSITY_DEBUG);
                 inliers = Optimizer::PoseInertialOptimizationLastKeyFrame(&mCurrentFrame); // , !mpLastKeyFrame->GetMap()->GetIniertialBA1());
+
             }
         }
     }

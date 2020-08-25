@@ -160,7 +160,7 @@ cv::Mat KeyFrame::GetStereoCenter()
 
 cv::Mat KeyFrame::GetImuPosition()
 {
-    unique_lock<mutex> lock(mMutexPose);
+    //unique_lock<mutex> lock(mMutexPose); //<--ERROR HERE
     return Owb.clone();
 }
 

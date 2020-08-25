@@ -7341,8 +7341,11 @@ int Optimizer::PoseInertialOptimizationLastKeyFrame(Frame *pFrame, bool bRecInit
     int nInitialStereoCorrespondences=0;
     int nInitialCorrespondences=0;
 
+    //Error check (rmv)
+    if(pFrame==NULL){std::cout<<"\nNULL FRAME\n\n";}else{std::cout<<"\nvalid frame\n\n";}
+
     // Set Frame vertex
-    VertexPose* VP = new VertexPose(pFrame);
+    VertexPose* VP = new VertexPose(pFrame); //<--Error here
     VP->setId(0);
     VP->setFixed(false);
     optimizer.addVertex(VP);

@@ -20,7 +20,7 @@ Camera.width: 1600
 Camera.height: 1200
 
 # Camera frames per second 
-Camera.fps: 15 #20 as per stamps; Paper:15
+Camera.fps: 20 #20 as per stamps; Paper:15
 
 # stereo baseline times fx
 Camera.bf: 160.604
@@ -42,10 +42,10 @@ Tbc: !!opencv-matrix
          0.0, 0.0, 0.0, 1.0]
 
 # IMU noise
-IMU.NoiseGyro:  8.7266e-05 #6.5e-03 # 1.6968e-04 
-IMU.NoiseAcc: 1.0e-03 # 2.0000e-3
-IMU.GyroWalk: 1.0e-02 #2.78e-3 #2.0e-4 #1.9393e-05 
-IMU.AccWalk: 4.0e-2 #3.0e-04 # 3.0000e-3
+IMU.NoiseGyro: 8.7e-05 #8.7266e-05 datasheet #6.5e-03 tuned # 1.6968e-04 default
+IMU.NoiseAcc: 2.0e-03 #1.0e-03 datasheet # 2.0000e-3
+IMU.GyroWalk: 2.0e-04 #2.78e-3 #2.0e-4 #1.9393e-05 
+IMU.AccWalk: 3.0e-3 #3.0e-04 # 3.0000e-3 default
 IMU.Frequency: 100 #83.333 #(IMU readings missing, otherwise 166.667) Paper:100
 
 #--------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ ORBextractor.nFeatures: 1400
 ORBextractor.scaleFactor: 1.4
 
 # ORB Extractor: Number of levels in the scale pyramid	
-ORBextractor.nLevels: 10
+ORBextractor.nLevels: 11
 
 # ORB Extractor: Fast threshold
 # Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
