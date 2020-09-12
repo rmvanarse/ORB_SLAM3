@@ -870,7 +870,7 @@ float KeyFrame::ComputeSceneMedianDepth(const int q)
 
 void KeyFrame::SetNewBias(const IMU::Bias &b)
 {
-    unique_lock<mutex> lock(mMutexPose);
+    unique_lock<mutex> lock(mMutexPose); //Temp Rmv
     mImuBias = b;
     if(mpImuPreintegrated)
         mpImuPreintegrated->SetNewBias(b);

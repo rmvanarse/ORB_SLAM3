@@ -25,8 +25,13 @@ namespace ORB_SLAM3
 ImuCamPose::ImuCamPose(KeyFrame *pKF):its(0)
 {
     // Load IMU pose
-    //std::cout <<"\n("<<pKF->GetImuPosition().rows<<", "<<pKF->GetImuPosition().cols<<")\n\n";
-    
+    bool debug = true;
+    if(debug){
+        std::cout << "\nIn ImuCamPose constructor...\n";
+        if(pKF==NULL) std::cout << "NULL keyframe\n";
+        std::cout <<"("<<pKF->GetImuPosition().rows<<", "<<pKF->GetImuPosition().cols<<")\n\n";
+    }
+
     if(pKF->GetImuPosition().rows!=3 || pKF->GetImuPosition().cols!=1){
         std::cout << "\nInvalid IMU Position matrix\n\n";
     }else{

@@ -948,7 +948,7 @@ void LocalMapping::KeyFrameCulling()
     else if (mbMonocular)
         redundant_th = 0.9;
     else
-        redundant_th = 0.5;
+        redundant_th = 0.8; //Temp Rmv Original: 0.5
 
     const bool bInitImu = mpAtlas->isImuInitialized();
     int count=0;
@@ -1056,6 +1056,7 @@ void LocalMapping::KeyFrameCulling()
 
                     if((bInitImu && (pKF->mnId<last_ID) && t<3.) || (t<0.5))
                     {
+                        if(pKF->mpImuPreintegrated==NULL){std::cout<<"KF culling: mpImuPreintegrated NULL\n";}
                         pKF->mNextKF->mpImuPreintegrated->MergePrevious(pKF->mpImuPreintegrated);
                         pKF->mNextKF->mPrevKF = pKF->mPrevKF;
                         pKF->mPrevKF->mNextKF = pKF->mNextKF;
@@ -1065,6 +1066,7 @@ void LocalMapping::KeyFrameCulling()
                     }
                     else if(!mpCurrentKeyFrame->GetMap()->GetIniertialBA2() && (cv::norm(pKF->GetImuPosition()-pKF->mPrevKF->GetImuPosition())<0.02) && (t<3))
                     {
+                        if(pKF->mpImuPreintegrated==NULL){std::cout<<"KF culling: mpImuPreintegrated NULL\n";}
                         pKF->mNextKF->mpImuPreintegrated->MergePrevious(pKF->mpImuPreintegrated);
                         pKF->mNextKF->mPrevKF = pKF->mPrevKF;
                         pKF->mPrevKF->mNextKF = pKF->mNextKF;

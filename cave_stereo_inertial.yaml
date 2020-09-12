@@ -120,8 +120,8 @@ ORBextractor.nLevels: 11
 # Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
 # Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
 # You can lower these values if your images have low contrast			
-ORBextractor.iniThFAST: 10
-ORBextractor.minThFAST: 4
+ORBextractor.iniThFAST: 10 #Original: 20, Working: 10
+ORBextractor.minThFAST: 4 #Original: 7, Working: 4
 
 #--------------------------------------------------------------------------------------------
 # Viewer Parameters

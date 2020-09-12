@@ -515,8 +515,13 @@ void Optimizer::FullInertialBA(Map *pMap, int its, const bool bFixLocal, const l
             if(pKFi->isBad() || pKFi->mPrevKF->mnId>maxKFid)
                 continue;
             if(pKFi->bImu && pKFi->mPrevKF->bImu)
-            {
-                pKFi->mpImuPreintegrated->SetNewBias(pKFi->mPrevKF->GetImuBias());
+            {   
+                ORB_SLAM3::IMU::Bias RmvImuBias = pKFi->mPrevKF->GetImuBias();
+                if(pKFi->mPrevKF==NULL || &RmvImuBias==NULL) continue;
+                std::cout << "pKFi mPrevKF & IMU Bias are valid!\n";
+
+                pKFi->mpImuPreintegrated->SetNewBias(RmvImuBias); //Rmv arg: pKFi->mPrevKF->GetImuBias()
+                std::cout << "Bias set successfully\n";
                 g2o::HyperGraph::Vertex* VP1 = optimizer.vertex(pKFi->mPrevKF->mnId);
                 g2o::HyperGraph::Vertex* VV1 = optimizer.vertex(maxKFid+3*(pKFi->mPrevKF->mnId)+1);
 
@@ -5235,7 +5240,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
 
         if(pKFi->mPrevKF && pKFi->mnId<=maxKFid)
         {
-            if(pKFi->isBad() || pKFi->mPrevKF->mnId>maxKFid)
+            if(pKFi->isBad() || pKFi->mPrevKF->mnId>maxKFid || pKFi->mpImuPreintegrated==NULL) //arg3: Rmv
                 continue;
             if(!pKFi->mpImuPreintegrated)
                 std::cout << "Not preintegrated measurement" << std::endl;
@@ -7341,11 +7346,9 @@ int Optimizer::PoseInertialOptimizationLastKeyFrame(Frame *pFrame, bool bRecInit
     int nInitialStereoCorrespondences=0;
     int nInitialCorrespondences=0;
 
-    //Error check (rmv)
-    if(pFrame==NULL){std::cout<<"\nNULL FRAME\n\n";}else{std::cout<<"\nvalid frame\n\n";}
 
     // Set Frame vertex
-    VertexPose* VP = new VertexPose(pFrame); //<--Error here
+    VertexPose* VP = new VertexPose(pFrame);
     VP->setId(0);
     VP->setFixed(false);
     optimizer.addVertex(VP);
@@ -7491,8 +7494,11 @@ int Optimizer::PoseInertialOptimizationLastKeyFrame(Frame *pFrame, bool bRecInit
     }
     nInitialCorrespondences = nInitialMonoCorrespondences + nInitialStereoCorrespondences;
 
+    //Error check (rmv)
+    if(pFrame->mpLastKeyFrame==NULL){std::cout<<"\nOptimizer: NULL Last-Keyframe\n\n";}else{std::cout<<"\nvalid frame\n\n";}
+    
     KeyFrame* pKF = pFrame->mpLastKeyFrame;
-    VertexPose* VPk = new VertexPose(pKF);
+    VertexPose* VPk = new VertexPose(pKF); //<--Error here
     VPk->setId(4);
     VPk->setFixed(true);
     optimizer.addVertex(VPk);
@@ -7886,6 +7892,7 @@ int Optimizer::PoseInertialOptimizationLastFrame(Frame *pFrame, bool bRecInit)
     nInitialCorrespondences = nInitialMonoCorrespondences + nInitialStereoCorrespondences;
 
     // Set Previous Frame Vertex
+    if(pFrame->mpPrevFrame == NULL) std::cout << "\nOptimizer: PREV FRAME NULL!\n\n";
     Frame* pFp = pFrame->mpPrevFrame;
 
     VertexPose* VPk = new VertexPose(pFp);
@@ -7937,8 +7944,10 @@ int Optimizer::PoseInertialOptimizationLastFrame(Frame *pFrame, bool bRecInit)
     ear->setInformation(InfoA);
     optimizer.addEdge(ear);
 
-    if (!pFp->mpcpi)
+    if (!pFp->mpcpi){
         Verbose::PrintMess("pFp->mpcpi does not exist!!!\nPrevious Frame " + to_string(pFp->mnId), Verbose::VERBOSITY_NORMAL);
+        std::cout<<"\n!pFp->mpcpi\n";
+    }
 
     EdgePriorPoseImu* ep = new EdgePriorPoseImu(pFp->mpcpi);
 

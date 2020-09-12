@@ -20,7 +20,7 @@ Camera.width: 1600
 Camera.height: 1200
 
 # Camera frames per second 
-Camera.fps: 15 #20 as per stamps; Paper:15
+Camera.fps: 20 #20 as per stamps; Paper:15
 
 # stereo baseline times fx
 Camera.bf: 111.41144927514999 #105.69928840390084 111.41144927514999
@@ -43,9 +43,9 @@ Tbc: !!opencv-matrix
 
 # IMU noise
 IMU.NoiseGyro:  8.7266e-05 #6.5e-03 # 1.6968e-04 
-IMU.NoiseAcc: 1.0e-03 # 2.0000e-3
-IMU.GyroWalk: 2.0e-03 #2.78e-3 #2.0e-4 #1.9393e-05 
-IMU.AccWalk: 3.0e-4 #3.0e-04 # 3.0000e-3
+IMU.NoiseAcc: 2.0e-03 # 2.0000e-3
+IMU.GyroWalk: 2.0e-04 #2.78e-3 #2.0e-4 #1.9393e-05 
+IMU.AccWalk: 3.0e-3 #3.0e-04 # 3.0000e-3
 IMU.Frequency: 100 #83.333 #(IMU readings missing, otherwise 166.667) Paper:100
 
 #--------------------------------------------------------------------------------------------
@@ -63,7 +63,8 @@ LEFT.K: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [1167.87421447215, 0.0, 771.763112280329, 0.0, 1166.9553764645004, 589.9626482585169, 0.0, 0.0, 1.0]
+   data: [1138.83276975408, 0.0, 708.1729373830466, 0.0, 1139.594698074792, 617.1289738266081, 0.0, 0.0, 1.0]
+#[1167.87421447215, 0.0, 771.763112280329, 0.0, 1166.9553764645004, 589.9626482585169, 0.0, 0.0, 1.0]
 LEFT.R:  !!opencv-matrix
    rows: 3
    cols: 3
@@ -91,7 +92,8 @@ RIGHT.K: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [1165.9493476066016, 0.0, 752.2788466729131, 0.0, 1167.2556820541186, 580.9613365661235, 0.0, 0.0, 1.0]
+   data: [1138.6334240599165, 0.0, 720.1812627366363, 0.0, 1138.774613252216, 602.906549415305, 0.0, 0.0, 1.0]
+#[1165.9493476066016, 0.0, 752.2788466729131, 0.0, 1167.2556820541186, 580.9613365661235, 0.0, 0.0, 1.0]
 RIGHT.R:  !!opencv-matrix
    rows: 3
    cols: 3
@@ -108,19 +110,19 @@ RIGHT.P:  !!opencv-matrix
 #--------------------------------------------------------------------------------------------
 
 # ORB Extractor: Number of features per image
-ORBextractor.nFeatures: 1600
+ORBextractor.nFeatures: 1400
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	
-ORBextractor.scaleFactor: 1.4
+ORBextractor.scaleFactor: 1.2
 
 # ORB Extractor: Number of levels in the scale pyramid	
-ORBextractor.nLevels: 11
+ORBextractor.nLevels: 10
 
 # ORB Extractor: Fast threshold
 # Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
 # Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
 # You can lower these values if your images have low contrast			
-ORBextractor.iniThFAST: 14
+ORBextractor.iniThFAST: 10
 ORBextractor.minThFAST: 4
 
 #--------------------------------------------------------------------------------------------

@@ -310,12 +310,26 @@ void Preintegrated::IntegrateNewMeasurement(const cv::Point3f &acceleration, con
 }
 
 void Preintegrated::MergePrevious(Preintegrated* pPrev)
-{
+{   
+    bool debug = true;
+
     if (pPrev==this)
         return;
+    if(pPrev == NULL) {
+        std::cout << "\nPreintegrated""MergePrevious - pPrev is NULL\nSkipping step...\n";
+        return;
+    }
 
-    std::unique_lock<std::mutex> lock1(mMutex);
-    std::unique_lock<std::mutex> lock2(pPrev->mMutex);
+    //std::unique_lock<std::mutex> lock1(mMutex); //Rmv
+    //std::unique_lock<std::mutex> lock2(pPrev->mMutex); //Rmv
+
+    if(debug) std::cout << "pPrev is valid\n";
+
+    if(&bu == NULL) {
+        std::cout << "\nPreintegrated""MergePrevious - bu is NULL\nSkipping step...\n";
+        return;
+    }
+
     Bias bav;
     bav.bwx = bu.bwx;
     bav.bwy = bu.bwy;
@@ -324,8 +338,12 @@ void Preintegrated::MergePrevious(Preintegrated* pPrev)
     bav.bay = bu.bay;
     bav.baz = bu.baz;
 
+    if(debug) std::cout << "bu contents copied to bav\n";
+
     const std::vector<integrable > aux1 = pPrev->mvMeasurements;
     const std::vector<integrable> aux2 = mvMeasurements;
+
+    if(debug) std::cout << "aux1: "<<aux1.size()<<", aux2: "<<aux2.size()<<"\n";
 
     Initialize(bav);
     for(size_t i=0;i<aux1.size();i++)
@@ -337,8 +355,12 @@ void Preintegrated::MergePrevious(Preintegrated* pPrev)
 
 void Preintegrated::SetNewBias(const Bias &bu_)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
+    //std::unique_lock<std::mutex> lock(mMutex); //Temp Rmv
     bu = bu_;
+    //bu = bu_;
+    std::cout <<"bu = bu_\n";
+    if(!(&b.bwx) ||!(&b.bwy) ||!(&b.bwz) ||!(&b.bax) ||!(&b.bay) ||!(&b.baz))
+    	std::cout<<"Segmentation fault in b.xxx \n";
 
     db.at<float>(0) = bu_.bwx-b.bwx;
     db.at<float>(1) = bu_.bwy-b.bwy;

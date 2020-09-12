@@ -67,9 +67,9 @@ using namespace std;
 namespace ORB_SLAM3
 {
 
-    const int PATCH_SIZE = 31;
-    const int HALF_PATCH_SIZE = 15;
-    const int EDGE_THRESHOLD = 19;
+    const int PATCH_SIZE = 51; //Originally 31 rmv
+    const int HALF_PATCH_SIZE = 25; //Originally 15 rmv
+    const int EDGE_THRESHOLD = 19; //Originally 19 rmv
 
 
     static float IC_Angle(const Mat& image, Point2f pt,  const vector<int> & u_max)
@@ -1104,6 +1104,7 @@ namespace ORB_SLAM3
         int monoIndex = 0, stereoIndex = nkeypoints-1;
         for (int level = 0; level < nlevels; ++level)
         {
+           
             vector<KeyPoint>& keypoints = allKeypoints[level];
             int nkeypointsLevel = (int)keypoints.size();
 
@@ -1124,8 +1125,28 @@ namespace ORB_SLAM3
 
             float scale = mvScaleFactor[level]; //getScale(level, firstLevel, scaleFactor);
             int i = 0;
+            int num_out=0, num_in=0;//Rmv
+
             for (vector<KeyPoint>::iterator keypoint = keypoints.begin(),
                          keypointEnd = keypoints.end(); keypoint != keypointEnd; ++keypoint){
+
+
+                //Rmv TRIAL MASKING CODE
+                /*
+                if(!(int)(image.at<uchar>(cvRound(keypoint->pt.y+5), cvRound(keypoint->pt.x)))
+                    || !(int)(image.at<uchar>(cvRound(keypoint->pt.y-5), cvRound(keypoint->pt.x))))
+                {
+                    num_out++;
+                    if(keypoint != keypointEnd) keypoint = (keypoints.erase(keypoint))--;
+                }else{
+                    num_in++;
+                }*///Rmv
+                
+                //cout << image.rows <<',' << image.cols<<endl;
+                //cout << cvRound(keypoint->pt.x)<<','<<cvRound(keypoint->pt.y)<<endl;
+                //cout << (int)(image.at<uchar>(cvRound(keypoint->pt.y),cvRound(keypoint->pt.x)))<<endl;
+                //Rmv
+
 
                 // Scale keypoint coordinates
                 if (level != 0){
@@ -1142,10 +1163,16 @@ namespace ORB_SLAM3
                     desc.row(i).copyTo(descriptors.row(monoIndex));
                     monoIndex++;
                 }
+
                 i++;
             }
+
+            //cout << "Level: "<< level << endl;
+            //cout << "Out: "<< num_out <<"  In: " << num_in<< endl<<endl;
         }
+        
         //cout << "[ORBextractor]: extracted " << _keypoints.size() << " KeyPoints" << endl;
+        //cout << _mask.rows() <<','<< _mask.cols() << ',' << _mask.channels()<<endl<<endl; 
         return monoIndex;
     }
 

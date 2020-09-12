@@ -408,6 +408,11 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
     mCurrentFrame.mNameFile = filename;
     mCurrentFrame.mnDataset = mnNumDataset;
 
+    //Rmv:
+    /*
+    if(mCurrentFrame.mpLastKeyFrame == NULL || mCurrentFrame.mpPrevFrame == NULL){
+        std::cout <<"\n\nTracking.cc: Track() skipped\nCorrupt frame\n\n";
+    }*/
     try{Track();}catch(...){std::cout<<"FAILED TO TRACK";}
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
@@ -906,9 +911,9 @@ void Tracking::Track()
         if(mLastFrame.mTimeStamp>mCurrentFrame.mTimeStamp)
         {
             cerr << "ERROR: Frame with a timestamp older than previous frame detected!" << endl;
-            unique_lock<mutex> lock(mMutexImuQueue);
+            /*unique_lock<mutex> lock(mMutexImuQueue);
             mlQueueImuData.clear();
-            CreateMapInAtlas();
+            CreateMapInAtlas();*/ //Commented temp Rmv
             return;
         }
         else if(mCurrentFrame.mTimeStamp>mLastFrame.mTimeStamp+2.0) //Orignally 1.0 rmv
@@ -1025,7 +1030,8 @@ void Tracking::Track()
                 // Local Mapping might have changed some MapPoints tracked in last frame
                 CheckReplacedInLastFrame();
 
-                if((mVelocity.empty() && !pCurrentMap->isImuInitialized()) || mCurrentFrame.mnId<mnLastRelocFrameId+2)
+                if((mVelocity.empty() && !pCurrentMap->isImuInitialized()) || mCurrentFrame.mnId<mnLastRelocFrameId+2
+                    || (mCurrentFrame.mpLastKeyFrame == NULL || mCurrentFrame.mpPrevFrame == NULL)) //Rmv
                 {
                     //Verbose::PrintMess("TRACK: Track with respect to the reference KF ", Verbose::VERBOSITY_DEBUG);
                     bOK = TrackReferenceKeyFrame();
@@ -1065,6 +1071,7 @@ void Tracking::Track()
                 if (mState == RECENTLY_LOST)
                 {
                     Verbose::PrintMess("Lost for a short time", Verbose::VERBOSITY_NORMAL);
+
 
                     bOK = true;
                     if((mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO))
@@ -1197,10 +1204,14 @@ void Tracking::Track()
         if(!mCurrentFrame.mpReferenceKF)
             mCurrentFrame.mpReferenceKF = mpReferenceKF;
 
+        
+        if(mCurrentFrame.mpLastKeyFrame == NULL) std::cout <<"\n\nLAST KEYFRAME NULL!\n\n";
+        if(mCurrentFrame.mpPrevFrame == NULL) std::cout <<"\n\nPREV FRAME NULL!\n\n";
+
         // If we have an initial estimation of the camera pose and matching. Track the local map.
         if(!mbOnlyTracking)
         {
-            if(bOK)
+            if(bOK && mCurrentFrame.mpLastKeyFrame!=NULL && mCurrentFrame.mpPrevFrame!=NULL) //Rmv
             {
 #ifdef SAVE_TIMES
                 std::chrono::steady_clock::time_point time_StartTrackLocalMap = std::chrono::steady_clock::now();
@@ -1214,15 +1225,16 @@ void Tracking::Track()
 
 
             }
-            if(!bOK)
+            if(!bOK || mCurrentFrame.mpLastKeyFrame==NULL || mCurrentFrame.mpPrevFrame==NULL) //Rmv
                 cout << "Fail to track local map!" << endl;
+
         }
         else
         {
             // mbVO true means that there are few matches to MapPoints in the map. We cannot retrieve
             // a local map and therefore we do not perform TrackLocalMap(). Once the system relocalizes
             // the camera we will use the local map again.
-            if(bOK && !mbVO)
+            if(bOK && !mbVO && mCurrentFrame.mpLastKeyFrame!=NULL && mCurrentFrame.mpPrevFrame!=NULL) //Rmv
                 bOK = TrackLocalMap();
         }
 
@@ -2043,15 +2055,20 @@ bool Tracking::TrackLocalMap()
         Optimizer::PoseOptimization(&mCurrentFrame);
     else
     {
-        if(mCurrentFrame.mnId<=mnLastRelocFrameId+mnFramesToResetIMU)
+        if(mCurrentFrame.mpLastKeyFrame==NULL) std::cout<<"\n\nTracking-TLM: Last keyframe NULL\n\n";
+        if(mCurrentFrame.mpPrevFrame==NULL) std::cout<<"\n\nTracking-TLM: Prev frame NULL\n\n";
+
+        if(mCurrentFrame.mnId<=mnLastRelocFrameId+mnFramesToResetIMU || mCurrentFrame.mpLastKeyFrame==NULL)
         {
+            std::cout << "Starting Pose optimization\n";
             Verbose::PrintMess("TLM: PoseOptimization ", Verbose::VERBOSITY_DEBUG);
             Optimizer::PoseOptimization(&mCurrentFrame);
+            std::cout << "Finished Pose optimization\n";
         }
         else
         {
             // if(!mbMapUpdated && mState == OK) //  && (mnMatchesInliers>30))
-            if(!mbMapUpdated) //  && (mnMatchesInliers>30))
+            if(!mbMapUpdated && mCurrentFrame.mpPrevFrame->mpcpi!=NULL) //  && (mnMatchesInliers>30))
             {
                 Verbose::PrintMess("TLM: PoseInertialOptimizationLastFrame ", Verbose::VERBOSITY_DEBUG);
                 inliers = Optimizer::PoseInertialOptimizationLastFrame(&mCurrentFrame); // , !mpLastKeyFrame->GetMap()->GetIniertialBA1());
