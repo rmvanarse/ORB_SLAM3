@@ -4,6 +4,13 @@
 
 	<node pkg="ORB_SLAM3" type="pose_to_path.py" name="pose_to_path" output="screen"/>
 
+	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find ORB_SLAM3)/rviz/orb_mono.rviz"/>
+
+<rosparam>
+/camera/timeshift: -0.053694112369382575
+</rosparam>
+
+
 	<node pkg="ORB_SLAM3" type="Mono_Inertial" name="Mono_Inertial" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../archeo_mono_inertial.yaml true" output="screen"/>
 
 

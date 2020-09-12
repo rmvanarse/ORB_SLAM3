@@ -67,8 +67,8 @@ using namespace std;
 namespace ORB_SLAM3
 {
 
-    const int PATCH_SIZE = 51; //Originally 31 rmv
-    const int HALF_PATCH_SIZE = 25; //Originally 15 rmv
+    const int PATCH_SIZE = 31; //Originally 31 rmv
+    const int HALF_PATCH_SIZE = 15; //Originally 15 rmv
     const int EDGE_THRESHOLD = 19; //Originally 19 rmv
 
 
