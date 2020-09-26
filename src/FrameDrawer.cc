@@ -136,15 +136,15 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures)
                 }
                 else // This is match to a "visual odometry" MapPoint created in the last frame
                 {
-                    cv::rectangle(im,pt1,pt2,cv::Scalar(255,0,0),2);
-                    cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(255,0,0),-1);
+                    cv::rectangle(im,pt1,pt2,cv::Scalar(0,0,255),2);
+                    cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(0,0,255),-1);
                     mnTrackedVO++;
                 }
             }
-            /*else
+            else
             {
-                cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(0,0,255),-1);
-            }*/
+                cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(255,0,0),-1);
+            }
         }
         // std::cout << "2.3" << std::endl;
     }
@@ -392,12 +392,12 @@ void FrameDrawer::DrawTextInfo(cv::Mat &im, int nState, cv::Mat &imText)
     }
 
     int baseline=0;
-    cv::Size textSize = cv::getTextSize(s.str(),cv::FONT_HERSHEY_PLAIN,1,1,&baseline);
+    cv::Size textSize = cv::getTextSize(s.str(),cv::FONT_HERSHEY_PLAIN,3,2,&baseline);
 
     imText = cv::Mat(im.rows+textSize.height+10,im.cols,im.type());
     im.copyTo(imText.rowRange(0,im.rows).colRange(0,im.cols));
     imText.rowRange(im.rows,imText.rows) = cv::Mat::zeros(textSize.height+10,im.cols,im.type());
-    cv::putText(imText,s.str(),cv::Point(5,imText.rows-5),cv::FONT_HERSHEY_PLAIN,1,cv::Scalar(255,255,255),1,8);
+    cv::putText(imText,s.str(),cv::Point(5,imText.rows-5),cv::FONT_HERSHEY_PLAIN,3,cv::Scalar(255,255,255),2,8);
 
 }
 

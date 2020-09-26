@@ -357,8 +357,7 @@ void Preintegrated::SetNewBias(const Bias &bu_)
 {
     //std::unique_lock<std::mutex> lock(mMutex); //Temp Rmv
     bu = bu_;
-    //bu = bu_;
-    std::cout <<"bu = bu_\n";
+    //std::cout <<"bu = bu_\n";
     if(!(&b.bwx) ||!(&b.bwy) ||!(&b.bwz) ||!(&b.bax) ||!(&b.bay) ||!(&b.baz))
     	std::cout<<"Segmentation fault in b.xxx \n";
 

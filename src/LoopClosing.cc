@@ -180,7 +180,8 @@ void LoopClosing::Run()
                         //cout << "Angle Rw2w1: " << 180*phi/3.14 << endl;
                         //cout << "scale w2w1: " << g2oSww_new.scale() << endl;
 
-                        if (fabs(phi(0))<0.008f && fabs(phi(1))<0.008f && fabs(phi(2))<0.349f)
+                        if (fabs(phi(0))<0.01f && fabs(phi(1))<0.01f && fabs(phi(2))<0.36f) //RMV
+                        	//This was (fabs(phi(0))<0.008f && fabs(phi(1))<0.008f && fabs(phi(2))<0.349f)
                         {
                             if(mpCurrentKF->GetMap()->IsInertial())
                             {
@@ -557,11 +558,11 @@ bool LoopClosing::DetectAndReffineSim3FromLastKF(KeyFrame* pCurrentKF, KeyFrame*
 bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame*> &vpBowCand, KeyFrame* &pMatchedKF2, KeyFrame* &pLastCurrentKF, g2o::Sim3 &g2oScw,
                                              int &nNumCoincidences, std::vector<MapPoint*> &vpMPs, std::vector<MapPoint*> &vpMatchedMPs)
 {
-    int nBoWMatches = 20;
-    int nBoWInliers = 15;
-    int nSim3Inliers = 20;
-    int nProjMatches = 50;
-    int nProjOptMatches = 80;
+    int nBoWMatches = 15; //Rmv 20
+    int nBoWInliers = 10; //Rmv 15
+    int nSim3Inliers = 15; //Rmv 20
+    int nProjMatches = 35; //Rmv 50
+    int nProjOptMatches = 50; //Rmv 80
     /*if(mpTracker->mSensor==System::IMU_MONOCULAR ||mpTracker->mSensor==System::IMU_STEREO)
     {
         nBoWMatches = 20;
@@ -573,7 +574,7 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame*> &vpBowCand, 
 
     set<KeyFrame*> spConnectedKeyFrames = mpCurrentKF->GetConnectedKeyFrames();
 
-    int nNumCovisibles = 5;
+    int nNumCovisibles = 3; //Rmv 5
 
     ORBmatcher matcherBoW(0.9, true);
     ORBmatcher matcher(0.75, true);
