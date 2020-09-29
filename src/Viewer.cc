@@ -35,16 +35,17 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
      
     
     image_pub = img_transporter.advertise("/orbslam3/image_features", 1);  
-
+    numFeatures_pub = nh.advertise<std_msgs::Int32>("/orbslam3/num_features", 1);
 
     //
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
 
     float fps = fSettings["Camera.fps"];
+    float viewer_speed = 0.2;
     if(fps<1)
         fps=30;
-    mT = 1e3/fps;
+    mT = 1e3/(fps*viewer_speed);
 
     mImageWidth = fSettings["Camera.width"];
     mImageHeight = fSettings["Camera.height"];
@@ -228,7 +229,8 @@ void Viewer::Run()
         pangolin::FinishFrame();
 
         cv::Mat toShow;
-        cv::Mat im = mpFrameDrawer->DrawFrame(true);
+        int numFeaturesTracked;
+        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked);
 
         if(both){
             cv::Mat imRight = mpFrameDrawer->DrawRightFrame();
@@ -250,9 +252,11 @@ void Viewer::Run()
         cv_img.toImageMsg(img_msg);
         //cv_bridge::CvImagePtr cv_ptr;
         //cv_ptr->image = cv_img;
-        
-        
+
+
+        num_features.data = numFeaturesTracked;
         image_pub.publish(img_msg);
+        numFeatures_pub.publish(num_features);
 
         if(menuReset)
         {

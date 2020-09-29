@@ -34,7 +34,7 @@ FrameDrawer::FrameDrawer(Atlas* pAtlas):both(false),mpAtlas(pAtlas)
     mImRight = cv::Mat(480,640,CV_8UC3, cv::Scalar(0,0,0));
 }
 
-cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures)
+cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked)
 {
     // std::cout << "0" << std::endl;
     cv::Mat im;
@@ -143,10 +143,11 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures)
             }
             else
             {
-                cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(255,0,0),-1);
+                cv::circle(im,vCurrentKeys[i].pt,3,cv::Scalar(255,0,0),-1);
             }
         }
         // std::cout << "2.3" << std::endl;
+        *numFeaturesTracked = mnTracked;
     }
     else if(state==Tracking::OK && !bOldFeatures)
     {
@@ -186,7 +187,7 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures)
             }
             else
             {
-                cv::circle(im,p_image,2,cv::Scalar(0,0,255),-1);
+                cv::circle(im,p_image,4,cv::Scalar(0,0,255),-1);
             }
 
 

@@ -44,6 +44,8 @@ using namespace std;
 
 double timeshift_left = 0.0, timeshift_right = 0.0;
 
+
+
 class ImuGrabber
 {
 public:
@@ -83,6 +85,9 @@ public:
 
 int main(int argc, char **argv)
 {
+
+  
+  
   ros::init(argc, argv, "Stereo_Inertial");
   ros::NodeHandle n("~");
   ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Info);
