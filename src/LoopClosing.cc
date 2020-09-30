@@ -27,8 +27,9 @@
 
 #include<mutex>
 #include<thread>
+#include <fstream>
 
-ofstream badLoopFile, loopParams;
+ofstream badLoopFile, loopParams, loopScores;
 
 namespace ORB_SLAM3
 {
@@ -165,6 +166,19 @@ void LoopClosing::Run()
                     vdPR_MatchedTime.push_back(mpLoopMatchedKF->mTimeStamp);
                     vnPR_TypeRecogn.push_back(0);
 
+                    //Rmv: Candidate scores
+                    
+                    const DBoW2::BowVector &CurrentBowVec = mpCurrentKF->mBowVec;
+                    const DBoW2::BowVector &MatchedBowVec = mpLoopMatchedKF->mBowVec;
+                    float score = mpORBVocabulary->score(CurrentBowVec, MatchedBowVec);
+                    
+                    loopScores.open("loopScores.csv", std::ios_base::app);
+                    loopScores << std::fixed << mpCurrentKF->mTimeStamp << "," << score <<std::endl;
+                    loopScores.close();                    
+                    
+
+                    //---------
+                    
 
                     Verbose::PrintMess("*Loop detected", Verbose::VERBOSITY_QUIET);
 
@@ -202,9 +216,9 @@ void LoopClosing::Run()
                         }
                         else
                         {	
-                        	badLoopFile.open("badLoopFile.csv", std::ios_base::app);
-                        	badLoopFile << fabs(phi(0)) <<","<<fabs(phi(1))<<","<<fabs(phi(2)) <<std::endl;
-                            badLoopFile.close();
+                        	//badLoopFile.open("badLoopFile.csv", std::ios_base::app);
+                        	//badLoopFile << fabs(phi(0)) <<","<<fabs(phi(1))<<","<<fabs(phi(2)) <<std::endl;
+                            //badLoopFile.close();
                             cout << "BAD LOOP!!!" << endl;
                         }
                     }
@@ -765,9 +779,9 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame*> &vpBowCand, 
                             cout << "BoW: Current KF " << mpCurrentKF->mnId << "; candidate KF " << pKFi->mnId << endl;
                             cout << "BoW: There are " << numProjOptMatches << " matches between them with the optimized Sim3" << endl;
                             
-                            loopParams.open("loopParams.csv", std::ios_base::app);
-                            loopParams << numProjOptMatches<<","<< vpMapPoints.size()<<std::endl;
-                            loopParams.close();
+                            //loopParams.open("loopParams.csv", std::ios_base::app);
+                            //loopParams << numProjOptMatches<<","<< vpMapPoints.size()<<std::endl;
+                            //loopParams.close();
                             
                             int max_x = -1, min_x = 1000000;
                             int max_y = -1, min_y = 1000000;

@@ -32,6 +32,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Float32.h>
 
 
 namespace ORB_SLAM3
@@ -52,8 +53,12 @@ public:
     ros::NodeHandle nh;
 	image_transport::ImageTransport img_transporter;
 	image_transport::Publisher image_pub;
+	
 	ros::Publisher numFeatures_pub;
+	ros::Publisher meanResponse_pub;
+	
 	std_msgs::Int32 num_features;
+	std_msgs::Float32 mean_response;
 	std_msgs::Header header;
 	
     void Run();

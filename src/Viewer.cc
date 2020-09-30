@@ -35,7 +35,8 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
      
     
     image_pub = img_transporter.advertise("/orbslam3/image_features", 1);  
-    numFeatures_pub = nh.advertise<std_msgs::Int32>("/orbslam3/num_features", 1);
+    numFeatures_pub = nh.advertise<std_msgs::Int32>("/orbslam3/features/num_tracked", 1);
+    meanResponse_pub = nh.advertise<std_msgs::Float32>("/orbslam3/features/mean_response", 1);
 
     //
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -230,7 +231,8 @@ void Viewer::Run()
 
         cv::Mat toShow;
         int numFeaturesTracked;
-        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked);
+        float meanResponse;
+        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked, &meanResponse);
 
         if(both){
             cv::Mat imRight = mpFrameDrawer->DrawRightFrame();
@@ -255,8 +257,10 @@ void Viewer::Run()
 
 
         num_features.data = numFeaturesTracked;
+        mean_response.data = meanResponse;
         image_pub.publish(img_msg);
         numFeatures_pub.publish(num_features);
+        meanResponse_pub.publish(mean_response);
 
         if(menuReset)
         {
