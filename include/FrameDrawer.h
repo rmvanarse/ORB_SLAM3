@@ -46,8 +46,8 @@ public:
     void Update(Tracking *pTracker);
 
     // Draw last processed frame.
-    cv::Mat DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float *meanResponse,
-		std::vector<cv::Point2f>* vTrackedPoints);
+    cv::Mat DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* fractionMatched,
+		float *meanResponse, std::vector<cv::Point2f>* vTrackedPoints);
     cv::Mat DrawRightFrame();
 
     bool both;

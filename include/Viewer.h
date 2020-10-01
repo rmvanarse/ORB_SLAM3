@@ -57,12 +57,13 @@ public:
 	image_transport::ImageTransport img_transporter;
 	image_transport::Publisher image_pub;
 	
-	ros::Publisher numFeatures_pub;
-	ros::Publisher meanResponse_pub;
-	ros::Publisher features_pub;
+	ros::Publisher numFeatures_pub;		//Number of tracked features (in frame)
+	ros::Publisher meanResponse_pub;	//Mean ORB response of all matched points (in frame)
+	ros::Publisher fractionMatched_pub; //Fraction of the projected map points matched (in frame)
+	ros::Publisher features_pub;		//Point array of all features (in frame)
 	
 	std_msgs::Int32 num_features;
-	std_msgs::Float32 mean_response;
+	std_msgs::Float32 mean_response, fraction_matched;
 	std_msgs::Header header;
 	sensor_msgs::PointCloud features;
 	

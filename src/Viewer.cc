@@ -38,7 +38,7 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
     numFeatures_pub = nh.advertise<std_msgs::Int32>("/orbslam3/features/num_tracked", 1);
     meanResponse_pub = nh.advertise<std_msgs::Float32>("/orbslam3/features/mean_response", 1);
     features_pub = nh.advertise<sensor_msgs::PointCloud>("/orbslam3/features/keypoints",1);
-
+    fractionMatched_pub = nh.advertise<std_msgs::Float32>("/orbslam3/features/fraction_matched", 1);
     //
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
@@ -232,9 +232,11 @@ void Viewer::Run()
 
         cv::Mat toShow;
         int numFeaturesTracked;
-        float meanResponse;
+        float meanResponse, fractionMatched;
         std::vector<cv::Point2f> vTrackedPoints;
-        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked, &meanResponse, &vTrackedPoints);
+
+        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked, &fractionMatched,
+                                        &meanResponse, &vTrackedPoints);
 
         if(both){
             cv::Mat imRight = mpFrameDrawer->DrawRightFrame();
@@ -261,6 +263,7 @@ void Viewer::Run()
 
         num_features.data = numFeaturesTracked;
         mean_response.data = meanResponse;
+        fraction_matched.data = fractionMatched;
         
         features.header = header;
         //geometry_msgs::Point32 featuresArray[numFeaturesTracked];
@@ -276,6 +279,7 @@ void Viewer::Run()
 
         image_pub.publish(img_msg);
         numFeatures_pub.publish(num_features);
+        fractionMatched_pub.publish(fraction_matched);
         meanResponse_pub.publish(mean_response);
         features_pub.publish(features);
 

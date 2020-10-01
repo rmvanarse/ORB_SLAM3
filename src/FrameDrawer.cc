@@ -34,8 +34,8 @@ FrameDrawer::FrameDrawer(Atlas* pAtlas):both(false),mpAtlas(pAtlas)
     mImRight = cv::Mat(480,640,CV_8UC3, cv::Scalar(0,0,0));
 }
 
-cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* meanResponse,
-                                std::vector<cv::Point2f>* vTrackedPoints)
+cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* fractionMatched,
+                                float* meanResponse, std::vector<cv::Point2f>* vTrackedPoints)
 {
     // std::cout << "0" << std::endl;
     cv::Mat im;
@@ -87,6 +87,8 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float
             mProjectPoints = mmProjectPoints;
             mMatchedInImage = mmMatchedInImage;
 
+            //std::cout << "\n"<<mProjectPoints.size()<<"->"<<mMatchedInImage.size()<<std::endl;
+            *fractionMatched = (float)(mMatchedInImage.size())/mProjectPoints.size();
         }
         else if(mState==Tracking::LOST)
         {
