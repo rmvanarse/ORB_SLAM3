@@ -34,7 +34,8 @@ FrameDrawer::FrameDrawer(Atlas* pAtlas):both(false),mpAtlas(pAtlas)
     mImRight = cv::Mat(480,640,CV_8UC3, cv::Scalar(0,0,0));
 }
 
-cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* meanResponse)
+cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* meanResponse,
+                                std::vector<cv::Point2f>* vTrackedPoints)
 {
     // std::cout << "0" << std::endl;
     cv::Mat im;
@@ -135,6 +136,7 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float
                     cv::rectangle(im,pt1,pt2,cv::Scalar(0,255,0),2);
                     cv::circle(im,vCurrentKeys[i].pt,2,cv::Scalar(0,255,0),-1);
                     sumScore+=vCurrentKeys[i].response;
+                    vTrackedPoints->push_back(vCurrentKeys[i].pt);
                     mnTracked++;
                 }
                 else // This is match to a "visual odometry" MapPoint created in the last frame

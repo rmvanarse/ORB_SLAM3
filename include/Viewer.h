@@ -33,6 +33,9 @@
 #include <sensor_msgs/image_encodings.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Float32.h>
+#include <geometry_msgs/Point32.h>
+#include <sensor_msgs/PointCloud.h>
+
 
 
 namespace ORB_SLAM3
@@ -56,10 +59,12 @@ public:
 	
 	ros::Publisher numFeatures_pub;
 	ros::Publisher meanResponse_pub;
+	ros::Publisher features_pub;
 	
 	std_msgs::Int32 num_features;
 	std_msgs::Float32 mean_response;
 	std_msgs::Header header;
+	sensor_msgs::PointCloud features;
 	
     void Run();
 

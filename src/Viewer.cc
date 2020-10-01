@@ -37,6 +37,7 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
     image_pub = img_transporter.advertise("/orbslam3/image_features", 1);  
     numFeatures_pub = nh.advertise<std_msgs::Int32>("/orbslam3/features/num_tracked", 1);
     meanResponse_pub = nh.advertise<std_msgs::Float32>("/orbslam3/features/mean_response", 1);
+    features_pub = nh.advertise<sensor_msgs::PointCloud>("/orbslam3/features/keypoints",1);
 
     //
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -232,7 +233,8 @@ void Viewer::Run()
         cv::Mat toShow;
         int numFeaturesTracked;
         float meanResponse;
-        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked, &meanResponse);
+        std::vector<cv::Point2f> vTrackedPoints;
+        cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked, &meanResponse, &vTrackedPoints);
 
         if(both){
             cv::Mat imRight = mpFrameDrawer->DrawRightFrame();
@@ -249,6 +251,7 @@ void Viewer::Run()
         cv::waitKey(mT);
 
         header.stamp = ros::Time::now();
+        
         cv_bridge::CvImage cv_img(header, sensor_msgs::image_encodings::RGB8, toShow);
         sensor_msgs::Image img_msg;
         cv_img.toImageMsg(img_msg);
@@ -258,9 +261,26 @@ void Viewer::Run()
 
         num_features.data = numFeaturesTracked;
         mean_response.data = meanResponse;
+        
+        features.header = header;
+        //geometry_msgs::Point32 featuresArray[numFeaturesTracked];
+
+        for (int i=0; i<numFeaturesTracked; i++){
+            geometry_msgs::Point32 p;
+            p.x = vTrackedPoints[i].x;
+            p.y = vTrackedPoints[i].y;
+            p.z = 1.0;
+            //featuresArray[i] = p;
+            features.points.push_back(p);
+        }
+
         image_pub.publish(img_msg);
         numFeatures_pub.publish(num_features);
         meanResponse_pub.publish(mean_response);
+        features_pub.publish(features);
+
+
+        //-------------------
 
         if(menuReset)
         {
