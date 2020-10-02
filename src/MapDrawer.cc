@@ -461,4 +461,19 @@ void MapDrawer::GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M, pangolin
 
 }
 
+//Rmv: Additional function for lifespans histogram
+std::vector<int> MapDrawer::getLifespanHistogram(){
+    const vector<MapPoint*> &vpMPs = mpAtlas->GetAllMapPoints();
+    int nBins = 40;
+    std::vector<int> bins(nBins);
+
+    for(size_t i=0, iend=vpMPs.size(); i<iend;i++){
+        int index = min((int)(vpMPs[i]->meanLifespan),nBins-1);
+        bins[index]++;
+    }
+    return bins;
+}
+
+
+
 } //namespace ORB_SLAM

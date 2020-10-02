@@ -186,6 +186,11 @@ public:
     long int mnFirstKFid;
     long int mnFirstFrame;
     int nObs;
+	
+	//Additional variables added:
+	int currentRun;
+	int numRuns;
+	float meanLifespan;
 
     // Variables used by the tracking
     float mTrackProjX;

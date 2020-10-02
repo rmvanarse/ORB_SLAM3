@@ -173,7 +173,10 @@ int main(int argc, char **argv)
 
   std::thread sync_thread(&ImageGrabber::SyncWithImu,&igb);
 
-  ros::spin();
+  while(ros::ok()){
+    ros::spinOnce();
+  }
+  //ros::spin();
 
   return 0;
 }

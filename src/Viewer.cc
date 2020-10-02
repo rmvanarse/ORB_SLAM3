@@ -284,6 +284,11 @@ void Viewer::Run()
         features_pub.publish(features);
 
 
+        std::vector<int> hist = mpMapDrawer->getLifespanHistogram();
+
+        for (int i=0; i<hist.size();i++) std::cout<<hist[i]<<" ";
+        std::cout<<std::endl;
+
         //-------------------
 
         if(menuReset)

@@ -2101,6 +2101,7 @@ bool Tracking::TrackLocalMap()
             if(!mCurrentFrame.mvbOutlier[i])
             {
                 mCurrentFrame.mvpMapPoints[i]->IncreaseFound();
+
                 if(!mbOnlyTracking)
                 {
                     if(mCurrentFrame.mvpMapPoints[i]->Observations()>0)
@@ -2435,6 +2436,16 @@ void Tracking::SearchLocalPoints()
             else
             {
                 pMP->IncreaseVisible();
+
+                if(pMP->mnLastFrameSeen == mCurrentFrame.mnId-1){
+                    pMP->currentRun++;
+                    pMP->meanLifespan+= 1.0/(pMP->numRuns);
+                }else{
+                    pMP->meanLifespan*=((float)(pMP->numRuns)/(pMP->numRuns+1));
+                    pMP->numRuns++;
+                    pMP->currentRun = 0;
+                }
+
                 pMP->mnLastFrameSeen = mCurrentFrame.mnId;
                 pMP->mbTrackInView = false;
                 pMP->mbTrackInViewR = false;

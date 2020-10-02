@@ -26,6 +26,7 @@
 #include<pangolin/pangolin.h>
 
 #include<mutex>
+#include<vector>
 
 namespace ORB_SLAM3
 {
@@ -44,6 +45,9 @@ public:
     void SetReferenceKeyFrame(KeyFrame *pKF);
     void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M, pangolin::OpenGlMatrix &MOw);
     void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M, pangolin::OpenGlMatrix &MOw, pangolin::OpenGlMatrix &MTwwp);
+
+	//Additional added
+	std::vector<int> getLifespanHistogram();
 
 private:
 
