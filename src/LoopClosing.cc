@@ -195,7 +195,7 @@ void LoopClosing::Run()
                         //cout << "Angle Rw2w1: " << 180*phi/3.14 << endl;
                         //cout << "scale w2w1: " << g2oSww_new.scale() << endl;
 
-                        if (fabs(phi(0))<0.01f && fabs(phi(1))<0.01f && fabs(phi(2))<0.36f) //RMV
+                        if (fabs(phi(0))<0.05f && fabs(phi(1))<0.05f && fabs(phi(2))<0.9f) //RMV
                         	//This was (fabs(phi(0))<0.008f && fabs(phi(1))<0.008f && fabs(phi(2))<0.349f)
                         {
                             if(mpCurrentKF->GetMap()->IsInertial())

@@ -58,7 +58,6 @@ MapPoint::MapPoint(const cv::Mat &Pos, KeyFrame *pRefKF, Map* pMap):
     unique_lock<mutex> lock(mpMap->mMutexPointCreation);
     mnId=nNextId++;
 
-    //
     currentRun = 0;
     numRuns = 1;
     meanLifespan = 0;
@@ -87,6 +86,7 @@ MapPoint::MapPoint(const double invDepth, cv::Point2f uv_init, KeyFrame* pRefKF,
     currentRun = 0;
     numRuns = 1;
     meanLifespan = 0;
+
 }
 
 MapPoint::MapPoint(const cv::Mat &Pos, Map* pMap, Frame* pFrame, const int &idxF):
@@ -131,6 +131,7 @@ MapPoint::MapPoint(const cv::Mat &Pos, Map* pMap, Frame* pFrame, const int &idxF
     currentRun = 0;
     numRuns = 1;
     meanLifespan = 0;
+
 }
 
 void MapPoint::SetWorldPos(const cv::Mat &Pos)

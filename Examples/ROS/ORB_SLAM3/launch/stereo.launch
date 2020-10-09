@@ -11,7 +11,7 @@
 	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find ORB_SLAM3)/rviz/orb.rviz"/>
 
 
-	<node pkg="ORB_SLAM3" type="Stereo" name="Stereo" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../cave_stereo_inertial.yaml true" output="screen"/>
+	<node pkg="ORB_SLAM3" type="Stereo" name="Stereo" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../cave_stereo_inertial.yaml true" output="screen" launch-prefix="gdb -ex run --args"/>
 
 
 

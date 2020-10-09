@@ -1205,13 +1205,13 @@ void Tracking::Track()
             mCurrentFrame.mpReferenceKF = mpReferenceKF;
 
         
-        if(mCurrentFrame.mpLastKeyFrame == NULL) std::cout <<"\n\nLAST KEYFRAME NULL!\n\n";
-        if(mCurrentFrame.mpPrevFrame == NULL) std::cout <<"\n\nPREV FRAME NULL!\n\n";
+        /*if(mCurrentFrame.mpLastKeyFrame == NULL) std::cout <<"\n\nLAST KEYFRAME NULL!\n\n";
+        if(mCurrentFrame.mpPrevFrame == NULL) std::cout <<"\n\nPREV FRAME NULL!\n\n";*/
 
         // If we have an initial estimation of the camera pose and matching. Track the local map.
         if(!mbOnlyTracking)
         {
-            if(bOK && mCurrentFrame.mpLastKeyFrame!=NULL && mCurrentFrame.mpPrevFrame!=NULL) //Rmv
+            if(bOK /*&& mCurrentFrame.mpLastKeyFrame!=NULL && mCurrentFrame.mpPrevFrame!=NULL*/) //Rmv
             {
 #ifdef SAVE_TIMES
                 std::chrono::steady_clock::time_point time_StartTrackLocalMap = std::chrono::steady_clock::now();
@@ -1225,7 +1225,7 @@ void Tracking::Track()
 
 
             }
-            if(!bOK || mCurrentFrame.mpLastKeyFrame==NULL || mCurrentFrame.mpPrevFrame==NULL) //Rmv
+            if(!bOK /*|| mCurrentFrame.mpLastKeyFrame==NULL || mCurrentFrame.mpPrevFrame==NULL*/) //Rmv
                 cout << "Fail to track local map!" << endl;
 
         }
@@ -1234,7 +1234,7 @@ void Tracking::Track()
             // mbVO true means that there are few matches to MapPoints in the map. We cannot retrieve
             // a local map and therefore we do not perform TrackLocalMap(). Once the system relocalizes
             // the camera we will use the local map again.
-            if(bOK && !mbVO && mCurrentFrame.mpLastKeyFrame!=NULL && mCurrentFrame.mpPrevFrame!=NULL) //Rmv
+            if(bOK && !mbVO /*&& mCurrentFrame.mpLastKeyFrame!=NULL && mCurrentFrame.mpPrevFrame!=NULL*/) //Rmv
                 bOK = TrackLocalMap();
         }
 
@@ -1818,7 +1818,7 @@ bool Tracking::TrackReferenceKeyFrame()
 
     int nmatches = matcher.SearchByBoW(mpReferenceKF,mCurrentFrame,vpMapPointMatches);
 
-    if(nmatches<15)
+    if(nmatches<8) //Rmv Originally 15
     {
         cout << "TRACK_REF_KF: Less than 15 matches!!\n";
         return false;
@@ -2068,7 +2068,7 @@ bool Tracking::TrackLocalMap()
         else
         {
             // if(!mbMapUpdated && mState == OK) //  && (mnMatchesInliers>30))
-            if(!mbMapUpdated && mCurrentFrame.mpPrevFrame->mpcpi!=NULL) //  && (mnMatchesInliers>30))
+            if(!mbMapUpdated /*&& mCurrentFrame.mpPrevFrame->mpcpi!=NULL*/) //  && (mnMatchesInliers>30))
             {
                 Verbose::PrintMess("TLM: PoseInertialOptimizationLastFrame ", Verbose::VERBOSITY_DEBUG);
                 inliers = Optimizer::PoseInertialOptimizationLastFrame(&mCurrentFrame); // , !mpLastKeyFrame->GetMap()->GetIniertialBA1());
@@ -2701,7 +2701,8 @@ void Tracking::UpdateLocalKeyFrames()
 
 bool Tracking::Relocalization()
 {
-    Verbose::PrintMess("Starting relocalization", Verbose::VERBOSITY_NORMAL);
+    //Verbose::PrintMess("Starting relocalization", Verbose::VERBOSITY_NORMAL);
+    std::cout<<"Starting relocalization"<<std::endl;
     // Compute Bag of Words Vector
     mCurrentFrame.ComputeBoW();
 
@@ -2710,7 +2711,8 @@ bool Tracking::Relocalization()
     vector<KeyFrame*> vpCandidateKFs = mpKeyFrameDB->DetectRelocalizationCandidates(&mCurrentFrame, mpAtlas->GetCurrentMap());
 
     if(vpCandidateKFs.empty()) {
-        Verbose::PrintMess("There are not candidates", Verbose::VERBOSITY_NORMAL);
+        //Verbose::PrintMess("There are not candidates", Verbose::VERBOSITY_NORMAL);
+        std::cout<<"There are not candidates"<<std::endl;
         return false;
     }
 

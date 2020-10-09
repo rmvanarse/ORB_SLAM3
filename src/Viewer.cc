@@ -39,6 +39,7 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
     meanResponse_pub = nh.advertise<std_msgs::Float32>("/orbslam3/features/mean_response", 1);
     features_pub = nh.advertise<sensor_msgs::PointCloud>("/orbslam3/features/keypoints",1);
     fractionMatched_pub = nh.advertise<std_msgs::Float32>("/orbslam3/features/fraction_matched", 1);
+    lifespans_pub = nh.advertise<std_msgs::Int32MultiArray>("/orbslam3/features/lifespans",1);
     //
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
@@ -123,6 +124,7 @@ void Viewer::Run()
         menuShowGraph = true;
     }
 
+    int iter = 0;
     while(1)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -267,14 +269,19 @@ void Viewer::Run()
         
         features.header = header;
         //geometry_msgs::Point32 featuresArray[numFeaturesTracked];
+        features.points.clear();
+        lifespans_histogram.data.clear();
 
-        for (int i=0; i<numFeaturesTracked; i++){
-            geometry_msgs::Point32 p;
-            p.x = vTrackedPoints[i].x;
-            p.y = vTrackedPoints[i].y;
-            p.z = 1.0;
-            //featuresArray[i] = p;
-            features.points.push_back(p);
+        if(vTrackedPoints.size())
+        {
+            for (int i=0; i<numFeaturesTracked; i++){
+                geometry_msgs::Point32 p;
+                p.x = vTrackedPoints[i].x;
+                p.y = vTrackedPoints[i].y;
+                p.z = 1.0;
+                //featuresArray[i] = p;
+                features.points.push_back(p);
+            }
         }
 
         image_pub.publish(img_msg);
@@ -283,11 +290,17 @@ void Viewer::Run()
         meanResponse_pub.publish(mean_response);
         features_pub.publish(features);
 
+        
+        if(!iter)
+        {
+            std::vector<int> hist = mpMapDrawer->getLifespanHistogram();
+        
+            for (int j=0; j<hist.size();j++) lifespans_histogram.data.push_back(hist[j]);
+            lifespans_pub.publish(lifespans_histogram);
+        }
 
-        std::vector<int> hist = mpMapDrawer->getLifespanHistogram();
+        iter = (iter+1)%10;
 
-        for (int i=0; i<hist.size();i++) std::cout<<hist[i]<<" ";
-        std::cout<<std::endl;
 
         //-------------------
 

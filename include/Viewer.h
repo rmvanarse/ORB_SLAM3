@@ -28,11 +28,18 @@
 #include <mutex>
 
 #include <ros/ros.h>//TRIAL
+
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
+
 #include <sensor_msgs/image_encodings.h>
+
 #include <std_msgs/Int32.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/MultiArrayDimension.h>
+#include <std_msgs/MultiArrayLayout.h>
+#include <std_msgs/Int32MultiArray.h>
+
 #include <geometry_msgs/Point32.h>
 #include <sensor_msgs/PointCloud.h>
 
@@ -61,10 +68,12 @@ public:
 	ros::Publisher meanResponse_pub;	//Mean ORB response of all matched points (in frame)
 	ros::Publisher fractionMatched_pub; //Fraction of the projected map points matched (in frame)
 	ros::Publisher features_pub;		//Point array of all features (in frame)
-	
+	ros::Publisher lifespans_pub;		//Histogram of lifespans of tracked points (in whole map)
+
 	std_msgs::Int32 num_features;
 	std_msgs::Float32 mean_response, fraction_matched;
 	std_msgs::Header header;
+	std_msgs::Int32MultiArray lifespans_histogram;
 	sensor_msgs::PointCloud features;
 	
     void Run();

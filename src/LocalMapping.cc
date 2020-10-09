@@ -164,7 +164,8 @@ void LocalMapping::Run()
                     if (mbMonocular)
                         InitializeIMU(1e2, 1e10, true);
                     else
-                        InitializeIMU(1e2, 3e6, true); /*initially 1e2, 1e5, changed to __,3e6*/
+                        std::cout <<"InitializeIMU() call #1" <<std::endl;
+                        InitializeIMU(1e2, 3e5, true); /*initially (1e2, 1e5, true)changed to __,3e6*/
                 }
 
 
@@ -185,7 +186,8 @@ void LocalMapping::Run()
                                 if (mbMonocular)
                                     InitializeIMU(1.f, 1e5, true); // 1.f, 1e5
                                 else
-                                    InitializeIMU(1.f, 1e5, true); // 1.f, 1e5
+                                    std::cout <<"InitializeIMU() call #2" <<std::endl;
+                                    InitializeIMU(1.f, 1e5, false); //Rmv: Originally true
 
                                 cout << "end VIBA 1" << endl;
                             }
@@ -198,7 +200,8 @@ void LocalMapping::Run()
                                 if (mbMonocular)
                                     InitializeIMU(0.f, 0.f, true); // 0.f, 0.f
                                 else
-                                    InitializeIMU(0.f, 0.f, true);
+                                    std::cout <<"InitializeIMU() call #3" <<std::endl;
+                                    InitializeIMU(0.f, 0.f, false); //Rmv: Originally true
 
                                 cout << "end VIBA 2" << endl;
                             }

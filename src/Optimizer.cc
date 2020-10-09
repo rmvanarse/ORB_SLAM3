@@ -5240,7 +5240,7 @@ void Optimizer::InertialOptimization(Map *pMap, Eigen::Matrix3d &Rwg, double &sc
 
         if(pKFi->mPrevKF && pKFi->mnId<=maxKFid)
         {
-            if(pKFi->isBad() || pKFi->mPrevKF->mnId>maxKFid || pKFi->mpImuPreintegrated==NULL) //arg3: Rmv
+            if(pKFi->isBad() || pKFi->mPrevKF->mnId>maxKFid /*|| pKFi->mpImuPreintegrated==NULL*/) //arg3: Rmv
                 continue;
             if(!pKFi->mpImuPreintegrated)
                 std::cout << "Not preintegrated measurement" << std::endl;
