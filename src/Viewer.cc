@@ -71,6 +71,8 @@ void Viewer::Run()
     mbFinished = false;
     mbStopped = false;
 
+    bool visualization = false;
+
     pangolin::CreateWindowAndBind("ORB-SLAM3: Map Viewer",1024,768);
 
     // 3D Mouse handler requires depth testing to be enabled
@@ -126,112 +128,117 @@ void Viewer::Run()
 
     int iter = 0;
     while(1)
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    {   
 
-        mpMapDrawer->GetCurrentOpenGLCameraMatrix(Twc,Ow,Twwp);
-
-        if(mbStopTrack)
+        if(visualization)
         {
-            menuStepByStep = true;
-            mbStopTrack = false;
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+                mpMapDrawer->GetCurrentOpenGLCameraMatrix(Twc,Ow,Twwp);
+        
+                if(mbStopTrack)
+                {
+                    menuStepByStep = true;
+                    mbStopTrack = false;
+                }
+        
+                if(menuFollowCamera && bFollow)
+                {
+                    if(bCameraView)
+                        s_cam.Follow(Twc);
+                    else
+                        s_cam.Follow(Ow);
+                }
+                else if(menuFollowCamera && !bFollow)
+                {
+                    if(bCameraView)
+                    {
+                        s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,mViewpointF,mViewpointF,512,389,0.1,1000));
+                        s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(mViewpointX,mViewpointY,mViewpointZ, 0,0,0,0.0,-1.0, 0.0));
+                        s_cam.Follow(Twc);
+                    }
+                    else
+                    {
+                        s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,1000));
+                        s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0,0.01,10, 0,0,0,0.0,0.0, 1.0));
+                        s_cam.Follow(Ow);
+                    }
+                    bFollow = true;
+                }
+                else if(!menuFollowCamera && bFollow)
+                {
+                    bFollow = false;
+                }
+        
+                if(menuCamView)
+                {
+                    menuCamView = false;
+                    bCameraView = true;
+                    s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,mViewpointF,mViewpointF,512,389,0.1,10000));
+                    s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(mViewpointX,mViewpointY,mViewpointZ, 0,0,0,0.0,-1.0, 0.0));
+                    s_cam.Follow(Twc);
+                }
+        
+                if(menuTopView && mpMapDrawer->mpAtlas->isImuInitialized())
+                {
+                    menuTopView = false;
+                    bCameraView = false;
+                    /*s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,1000));
+                    s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0,0.01,10, 0,0,0,0.0,0.0, 1.0));*/
+                    s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,10000));
+                    s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0,0.01,50, 0,0,0,0.0,0.0, 1.0));
+                    s_cam.Follow(Ow);
+                }
+        
+                /*if(menuSideView && mpMapDrawer->mpAtlas->isImuInitialized())
+                {
+                    s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,10000));
+                    s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0.0,0.1,30.0,0,0,0,0.0,0.0,1.0));
+                    s_cam.Follow(Twwp);
+                }*/
+        
+        
+                if(menuLocalizationMode && !bLocalizationMode)
+                {
+                    mpSystem->ActivateLocalizationMode();
+                    bLocalizationMode = true;
+                }
+                else if(!menuLocalizationMode && bLocalizationMode)
+                {
+                    mpSystem->DeactivateLocalizationMode();
+                    bLocalizationMode = false;
+                }
+        
+                if(menuStepByStep && !bStepByStep)
+                {
+                    mpTracker->SetStepByStep(true);
+                    bStepByStep = true;
+                }
+                else if(!menuStepByStep && bStepByStep)
+                {
+                    mpTracker->SetStepByStep(false);
+                    bStepByStep = false;
+                }
+        
+                if(menuStep)
+                {
+                    mpTracker->mbStep = true;
+                    menuStep = false;
+                }
+        
+        
+                d_cam.Activate(s_cam);
+                glClearColor(1.0f,1.0f,1.0f,1.0f);
+                mpMapDrawer->DrawCurrentCamera(Twc);
+                if(menuShowKeyFrames || menuShowGraph || menuShowInertialGraph)
+                    mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph, menuShowInertialGraph);
+                if(menuShowPoints)
+                    mpMapDrawer->DrawMapPoints();
+        
+                pangolin::FinishFrame();
         }
 
-        if(menuFollowCamera && bFollow)
-        {
-            if(bCameraView)
-                s_cam.Follow(Twc);
-            else
-                s_cam.Follow(Ow);
-        }
-        else if(menuFollowCamera && !bFollow)
-        {
-            if(bCameraView)
-            {
-                s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,mViewpointF,mViewpointF,512,389,0.1,1000));
-                s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(mViewpointX,mViewpointY,mViewpointZ, 0,0,0,0.0,-1.0, 0.0));
-                s_cam.Follow(Twc);
-            }
-            else
-            {
-                s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,1000));
-                s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0,0.01,10, 0,0,0,0.0,0.0, 1.0));
-                s_cam.Follow(Ow);
-            }
-            bFollow = true;
-        }
-        else if(!menuFollowCamera && bFollow)
-        {
-            bFollow = false;
-        }
-
-        if(menuCamView)
-        {
-            menuCamView = false;
-            bCameraView = true;
-            s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,mViewpointF,mViewpointF,512,389,0.1,10000));
-            s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(mViewpointX,mViewpointY,mViewpointZ, 0,0,0,0.0,-1.0, 0.0));
-            s_cam.Follow(Twc);
-        }
-
-        if(menuTopView && mpMapDrawer->mpAtlas->isImuInitialized())
-        {
-            menuTopView = false;
-            bCameraView = false;
-            /*s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,1000));
-            s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0,0.01,10, 0,0,0,0.0,0.0, 1.0));*/
-            s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,10000));
-            s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0,0.01,50, 0,0,0,0.0,0.0, 1.0));
-            s_cam.Follow(Ow);
-        }
-
-        /*if(menuSideView && mpMapDrawer->mpAtlas->isImuInitialized())
-        {
-            s_cam.SetProjectionMatrix(pangolin::ProjectionMatrix(1024,768,3000,3000,512,389,0.1,10000));
-            s_cam.SetModelViewMatrix(pangolin::ModelViewLookAt(0.0,0.1,30.0,0,0,0,0.0,0.0,1.0));
-            s_cam.Follow(Twwp);
-        }*/
-
-
-        if(menuLocalizationMode && !bLocalizationMode)
-        {
-            mpSystem->ActivateLocalizationMode();
-            bLocalizationMode = true;
-        }
-        else if(!menuLocalizationMode && bLocalizationMode)
-        {
-            mpSystem->DeactivateLocalizationMode();
-            bLocalizationMode = false;
-        }
-
-        if(menuStepByStep && !bStepByStep)
-        {
-            mpTracker->SetStepByStep(true);
-            bStepByStep = true;
-        }
-        else if(!menuStepByStep && bStepByStep)
-        {
-            mpTracker->SetStepByStep(false);
-            bStepByStep = false;
-        }
-
-        if(menuStep)
-        {
-            mpTracker->mbStep = true;
-            menuStep = false;
-        }
-
-
-        d_cam.Activate(s_cam);
-        glClearColor(1.0f,1.0f,1.0f,1.0f);
-        mpMapDrawer->DrawCurrentCamera(Twc);
-        if(menuShowKeyFrames || menuShowGraph || menuShowInertialGraph)
-            mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph, menuShowInertialGraph);
-        if(menuShowPoints)
-            mpMapDrawer->DrawMapPoints();
-
-        pangolin::FinishFrame();
-
+        
         cv::Mat toShow;
         int numFeaturesTracked;
         float meanResponse, fractionMatched;
@@ -248,7 +255,6 @@ void Viewer::Run()
             toShow = im;
         }
 
-        //THIS PART HAS BEEN CHANGED TO PUBBLISH ROSMSG INSTEAD OF CV IMSHOW -Rmv
         
         //cv::resizeWindow("ORB-SLAM3: Current Frame", 800,600);
         //cv::imshow("ORB-SLAM3: Current Frame",toShow);

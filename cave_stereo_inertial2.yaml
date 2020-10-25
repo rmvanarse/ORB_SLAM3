@@ -6,8 +6,8 @@
 Camera.type: "PinHole"
 
 # Camera calibration and distortion parameters (OpenCV) (equal for both cameras after stereo rectification)
-Camera.fx: 1158.0 #1331.7 #1136.7477932812305
-Camera.fy: 1158.0 #1331.7 #1136.7477932812305
+Camera.fx: 1156.0 #1331.7 #1136.7477932812305
+Camera.fy: 1156.0 #1331.7 #1136.7477932812305
 Camera.cx: 760.8502960205078
 Camera.cy: 610.0998077392578
 
@@ -23,7 +23,7 @@ Camera.height: 1200
 Camera.fps: 15 #20 as per stamps; Paper:15
 
 # stereo baseline times fx
-Camera.bf: 160.604
+Camera.bf: 161.3 #160.604
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
@@ -63,7 +63,7 @@ LEFT.K: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [1177.614, 0.0, 763.2083316463371, 0.0, 1177.666, 617.2779853849335, 0.0, 0.0, 1.0]
+   data: [1176.106, 0.0, 763.2083316463371, 0.0, 1176.165, 617.2779853849335, 0.0, 0.0, 1.0]
 LEFT.R:  !!opencv-matrix
    rows: 3
    cols: 3
@@ -78,7 +78,7 @@ LEFT.P:  !!opencv-matrix
    rows: 3
    cols: 4
    dt: d
-   data: [1158.0, 0.0, 760.8502960205078, 0.0, 0.0, 1158.0, 610.0998077392578, 0.0, 0.0, 0.0, 1.0, 0.0]
+   data: [1156.0, 0.0, 760.8502960205078, 0.0, 0.0, 1156.0, 610.0998077392578, 0.0, 0.0, 0.0, 1.0, 0.0]
 
 #-------
 
@@ -94,7 +94,7 @@ RIGHT.K: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [1179.7624, 0.0, 765.5609812846063, 0.0, 1177.087, 588.6683184401453, 0.0, 0.0, 1]
+   data: [1178.248, 0.0, 765.5609812846063, 0.0, 1175.64, 588.6683184401453, 0.0, 0.0, 1]
 RIGHT.R:  !!opencv-matrix
    rows: 3
    cols: 3
@@ -104,7 +104,7 @@ RIGHT.P:  !!opencv-matrix
    rows: 3
    cols: 4
    dt: d
-   data: [1158.0, 0.0, 760.8502960205078, -157.93623397062217, 0.0, 1158.0, 610.0998077392578, 0.0, 0.0, 0.0, 1.0, 0.0]
+   data: [1156.0, 0.0, 760.8502960205078, -157.93623397062217, 0.0, 1156.0, 610.0998077392578, 0.0, 0.0, 0.0, 1.0, 0.0]
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
