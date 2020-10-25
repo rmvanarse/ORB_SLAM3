@@ -35,7 +35,7 @@ FrameDrawer::FrameDrawer(Atlas* pAtlas):both(false),mpAtlas(pAtlas)
 }
 
 cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* fractionMatched,
-                                float* meanResponse, std::vector<cv::Point2f>* vTrackedPoints)
+                                float* meanResponse, std::vector<cv::Point2f>* vTrackedPoints, double* timestamp)
 {
     // std::cout << "0" << std::endl;
     cv::Mat im;
@@ -87,6 +87,7 @@ cv::Mat FrameDrawer::DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float
             mProjectPoints = mmProjectPoints;
             mMatchedInImage = mmMatchedInImage;
 
+            *timestamp = mCurrentFrame.mTimeStamp;
             //std::cout << "\n"<<mProjectPoints.size()<<"->"<<mMatchedInImage.size()<<std::endl;
             *fractionMatched = (float)(mMatchedInImage.size())/mProjectPoints.size();
         }

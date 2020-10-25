@@ -47,7 +47,7 @@ public:
 
     // Draw last processed frame.
     cv::Mat DrawFrame(bool bOldFeatures, int *numFeaturesTracked, float* fractionMatched,
-		float *meanResponse, std::vector<cv::Point2f>* vTrackedPoints);
+		float *meanResponse, std::vector<cv::Point2f>* vTrackedPoints, double* timestamp);
     cv::Mat DrawRightFrame();
 
     bool both;

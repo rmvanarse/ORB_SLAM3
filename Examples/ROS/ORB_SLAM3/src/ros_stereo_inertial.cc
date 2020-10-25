@@ -326,6 +326,8 @@ void ImageGrabber::SyncWithImu()
       try{
 
         geometry_msgs::PoseStamped pose;
+        ros::Time ts(tImLeft);
+        //pose.header.stamp = ts;
         pose.header.stamp = ros::Time::now();
         pose.header.frame_id ="odom";
 

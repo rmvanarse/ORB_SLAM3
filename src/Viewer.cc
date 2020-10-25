@@ -238,14 +238,15 @@ void Viewer::Run()
                 pangolin::FinishFrame();
         }
 
-        
+
         cv::Mat toShow;
         int numFeaturesTracked;
         float meanResponse, fractionMatched;
+        double tsIm;
         std::vector<cv::Point2f> vTrackedPoints;
 
         cv::Mat im = mpFrameDrawer->DrawFrame(true, &numFeaturesTracked, &fractionMatched,
-                                        &meanResponse, &vTrackedPoints);
+                                        &meanResponse, &vTrackedPoints, &tsIm);
 
         if(both){
             cv::Mat imRight = mpFrameDrawer->DrawRightFrame();
@@ -260,8 +261,10 @@ void Viewer::Run()
         //cv::imshow("ORB-SLAM3: Current Frame",toShow);
         cv::waitKey(mT);
 
-        header.stamp = ros::Time::now();
+        ros::Time ts(tsIm);
+        header.stamp = ts;
         
+
         cv_bridge::CvImage cv_img(header, sensor_msgs::image_encodings::RGB8, toShow);
         sensor_msgs::Image img_msg;
         cv_img.toImageMsg(img_msg);
