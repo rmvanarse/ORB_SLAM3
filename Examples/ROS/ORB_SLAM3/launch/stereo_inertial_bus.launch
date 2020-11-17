@@ -11,11 +11,11 @@
 	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find ORB_SLAM3)/rviz/orb.rviz"/>
 
 <rosparam>
-/camera/left/timeshift: 0.04280051428389464
-/camera/right/timeshift: 0.0460103226576335
+/camera/left/timeshift: -0.00508121
+/camera/right/timeshift: -0.00508121
 </rosparam>
 
-	<node pkg="ORB_SLAM3" type="Stereo_Inertial" name="Stereo_Inertial" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../bus_stereo_inertial.yaml true" output="screen" launch-prefix="gdb -ex run --args"/>
+	<node pkg="ORB_SLAM3" type="Stereo_Inertial" name="Stereo_Inertial" args="$(find ORB_SLAM3)/../../../Vocabulary/ORBvoc.txt $(find ORB_SLAM3)/../../../bus_stereo_inertial2.yaml true" output="screen" launch-prefix="gdb -ex run --args"/>
 
 
 

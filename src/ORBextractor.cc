@@ -67,8 +67,8 @@ using namespace std;
 namespace ORB_SLAM3
 {
 
-    const int PATCH_SIZE = 51; //Originally 31 rmv (Using 51 for stereo-inertial)
-    const int HALF_PATCH_SIZE = 25; //Originally 15 rmv (Using 25 for stereo-inertial)
+    const int PATCH_SIZE = 51; //Originally 31 rmv (Using 51 for CAVE stereo-inertial)
+    const int HALF_PATCH_SIZE = 25; //Originally 15 rmv (Using 25 for CAVE stereo-inertial)
     const int EDGE_THRESHOLD = 19; //Originally 19 rmv
 
 

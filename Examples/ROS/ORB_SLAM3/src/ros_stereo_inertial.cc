@@ -24,6 +24,7 @@
 #include<queue>
 #include<thread>
 #include<mutex>
+#include <random>
 
 #include<ros/ros.h>
 #include<cv_bridge/cv_bridge.h>
@@ -188,6 +189,7 @@ void ImageGrabber::GrabImageLeft(const sensor_msgs::ImageConstPtr &img_msg)
   mBufMutexLeft.lock();
   //if (!imgLeftBuf.empty())
     //imgLeftBuf.pop();
+
   imgLeftBuf.push(img_msg);
   mBufMutexLeft.unlock();
 }
@@ -356,6 +358,26 @@ void ImageGrabber::SyncWithImu()
 void ImuGrabber::GrabImu(const sensor_msgs::ImuConstPtr &imu_msg)
 {
   mBufMutex.lock();
+  bool bFakeNoise = false;
+
+  if(bFakeNoise){
+
+    //Not using this
+    //Add noise before publishing instead
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0.0,0.005);
+
+    sensor_msgs::Imu imu_msg2;
+
+    imu_msg2.angular_velocity.x = imu_msg->angular_velocity.x + distribution(generator);
+    imu_msg2.angular_velocity.y = imu_msg->angular_velocity.y + distribution(generator);
+    imu_msg2.angular_velocity.z = imu_msg->angular_velocity.z + distribution(generator);
+
+    imu_msg2.linear_acceleration.x = imu_msg->linear_acceleration.x + distribution(generator);
+    imu_msg2.linear_acceleration.y = imu_msg->linear_acceleration.y + distribution(generator);
+    imu_msg2.linear_acceleration.z = imu_msg->linear_acceleration.z + distribution(generator);
+    
+  }  
   imuBuf.push(imu_msg);
   mBufMutex.unlock();
   return;

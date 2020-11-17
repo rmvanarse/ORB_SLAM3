@@ -779,9 +779,9 @@ bool LoopClosing::DetectCommonRegionsFromBoW(std::vector<KeyFrame*> &vpBowCand, 
                             cout << "BoW: Current KF " << mpCurrentKF->mnId << "; candidate KF " << pKFi->mnId << endl;
                             cout << "BoW: There are " << numProjOptMatches << " matches between them with the optimized Sim3" << endl;
                             
-                            //loopParams.open("loopParams.csv", std::ios_base::app);
-                            //loopParams << numProjOptMatches<<","<< vpMapPoints.size()<<std::endl;
-                            //loopParams.close();
+                            loopParams.open("loopParams.csv", std::ios_base::app);
+                            loopParams << numProjOptMatches<<","<< vpMapPoints.size()<<std::endl;
+                            loopParams.close();
                             
                             int max_x = -1, min_x = 1000000;
                             int max_y = -1, min_y = 1000000;
